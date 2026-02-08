@@ -9,7 +9,7 @@
 !.yarn/versions
 
 .env
-.ROADMAP.md
+/ROADMAP.md
 
 # testing
 /coverage
