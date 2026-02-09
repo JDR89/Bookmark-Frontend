@@ -9,11 +9,13 @@ interface BookmarksState {
   bookmarks: Bookmark[];
   archivedBookmarks: Bookmark[];
   trashedBookmarks: Bookmark[];
+  selectedWorkspace: string;
   selectedCollection: string;
   searchQuery: string;
   viewMode: ViewMode;
   sortBy: SortBy;
   filterType: FilterType;
+  setSelectedWorkspace: (workspaceId: string) => void;
   setSelectedCollection: (collectionId: string) => void;
   setSearchQuery: (query: string) => void;
   setViewMode: (mode: ViewMode) => void;
@@ -31,15 +33,21 @@ interface BookmarksState {
   getTrashedBookmarks: () => Bookmark[];
 }
 
+import { collections as allCollections } from "@/mock-data/bookmarks";
+
 export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   bookmarks: initialBookmarks,
   archivedBookmarks: [],
   trashedBookmarks: [],
+  selectedWorkspace: "personal",
   selectedCollection: "all",
   searchQuery: "",
   viewMode: "grid",
   sortBy: "date-newest",
   filterType: "all",
+
+  setSelectedWorkspace: (workspaceId) =>
+    set({ selectedWorkspace: workspaceId, selectedCollection: "all" }),
 
   setSelectedCollection: (collectionId) => set({ selectedCollection: collectionId }),
 
@@ -109,9 +117,19 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
     const state = get();
     let filtered = [...state.bookmarks];
 
-    if (state.selectedCollection !== "all") {
+    // 1. Filter by Workspace first
+    const workspaceCollectionIds = allCollections
+      .filter((c) => c.workspaceId === state.selectedWorkspace)
+      .map((c) => c.id);
+
+    // If 'all' is selected, we show bookmarks from ANY collection in this workspace
+    if (state.selectedCollection === "all") {
+      filtered = filtered.filter((b) => workspaceCollectionIds.includes(b.collectionId));
+    } else {
+      // If a specific collection is selected, just filter by that
       filtered = filtered.filter((b) => b.collectionId === state.selectedCollection);
     }
+
 
     if (state.searchQuery) {
       const query = state.searchQuery.toLowerCase();

@@ -48,7 +48,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections } from "@/mock-data/bookmarks";
+import { collections, workspaces } from "@/mock-data/bookmarks";
 
 const collectionIcons: Record<string, React.ElementType> = {
   bookmark: Bookmark,
@@ -73,9 +73,19 @@ export function BookmarksSidebar({
   const {
     selectedCollection,
     setSelectedCollection,
+    selectedWorkspace,
+    setSelectedWorkspace,
   } = useBookmarksStore();
 
   const isHomePage = pathname === "/";
+
+  // Find current workspace object for display
+  const currentWorkspace = workspaces.find(w => w.id === selectedWorkspace) || workspaces[0];
+
+  // Filter collections by current workspace
+  const workspaceCollections = collections.filter(
+    (c) => c.workspaceId === selectedWorkspace
+  );
 
   return (
     <Sidebar collapsible="offcanvas" className="lg:border-r-0!" {...props}>
@@ -85,7 +95,7 @@ export function BookmarksSidebar({
             <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
               <div className="size-7 rounded-full overflow-hidden bg-linear-to-br from-blue-400 via-indigo-500 to-violet-500 flex items-center justify-center ring-1 ring-white/40 shadow-lg" />
               <span className="font-medium text-muted-foreground">
-                Square UI
+                {currentWorkspace.name}
               </span>
               <ChevronDown className="size-3 text-muted-foreground" />
             </DropdownMenuTrigger>
@@ -93,19 +103,18 @@ export function BookmarksSidebar({
               <DropdownMenuLabel className="text-muted-foreground text-xs font-medium">
                 Workspaces
               </DropdownMenuLabel>
-              <DropdownMenuItem>
-                <div className="size-5 rounded-full bg-linear-to-br from-blue-400 via-indigo-500 to-violet-500 mr-2" />
-                Square UI
-                <Check className="size-4 ml-auto" />
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="size-5 rounded-full bg-linear-to-br from-emerald-400 to-cyan-500 mr-2" />
-                Personal
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <div className="size-5 rounded-full bg-linear-to-br from-orange-400 to-rose-500 mr-2" />
-                Work
-              </DropdownMenuItem>
+              {workspaces.map((workspace) => (
+                <DropdownMenuItem
+                  key={workspace.id}
+                  onClick={() => setSelectedWorkspace(workspace.id)}
+                >
+                  <div className="size-5 rounded-full bg-linear-to-br from-blue-400 via-indigo-500 to-violet-500 mr-2" />
+                  {workspace.name}
+                  {selectedWorkspace === workspace.id && (
+                    <Check className="size-4 ml-auto" />
+                  )}
+                </DropdownMenuItem>
+              ))}
 
               <DropdownMenuSeparator />
 
@@ -170,7 +179,25 @@ export function BookmarksSidebar({
           {collectionsOpen && (
             <SidebarGroupContent>
               <SidebarMenu className="mt-2">
-                {collections.map((collection) => {
+                {/* Special "All Bookmarks" Item logic */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isHomePage && selectedCollection === "all"}
+                    className="h-[38px]"
+                  >
+                    <Link
+                      href="/"
+                      onClick={() => setSelectedCollection("all")}
+                    >
+                      <Bookmark className="size-5" />
+                      <span className="flex-1">All Bookmarks</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                {/* Filtered Collections List */}
+                {workspaceCollections.map((collection) => {
                   const IconComponent =
                     collectionIcons[collection.icon] || Folder;
                   const isActive =

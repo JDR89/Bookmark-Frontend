@@ -1,3 +1,10 @@
+export type Workspace = {
+  id: string;
+  name: string;
+  icon: string;
+  orderIndex: number;
+};
+
 export type Bookmark = {
   id: string;
   title: string;
@@ -12,31 +19,56 @@ export type Bookmark = {
 
 export type Collection = {
   id: string;
+  workspaceId: string;
   name: string;
   icon: string;
   color: string;
   count: number;
 };
 
-export const collections: Collection[] = [
+export const workspaces: Workspace[] = [
   {
-    id: "all",
-    name: "All Bookmarks",
-    icon: "bookmark",
-    color: "neutral",
-    count: 24,
+    id: "personal",
+    name: "Personal",
+    icon: "user",
+    orderIndex: 0,
   },
   {
+    id: "work",
+    name: "Work",
+    icon: "briefcase",
+    orderIndex: 1,
+  },
+];
+
+export const collections: Collection[] = [
+  {
     id: "design",
+    workspaceId: "work",
     name: "Design Resources",
     icon: "palette",
     color: "violet",
     count: 8,
   },
-  { id: "dev", name: "Development", icon: "code", color: "blue", count: 12 },
-  { id: "tools", name: "Tools", icon: "wrench", color: "amber", count: 6 },
+  {
+    id: "dev",
+    workspaceId: "work",
+    name: "Development",
+    icon: "code",
+    color: "blue",
+    count: 7,
+  },
+  {
+    id: "tools",
+    workspaceId: "work",
+    name: "Tools",
+    icon: "wrench",
+    color: "amber",
+    count: 6,
+  },
   {
     id: "reading",
+    workspaceId: "personal",
     name: "Reading List",
     icon: "book-open",
     color: "emerald",
@@ -44,6 +76,7 @@ export const collections: Collection[] = [
   },
   {
     id: "inspiration",
+    workspaceId: "personal",
     name: "Inspiration",
     icon: "sparkles",
     color: "pink",
@@ -95,6 +128,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "design",
     createdAt: "2024-01-12",
     isFavorite: true,
+    hasDarkIcon: true,
   },
   {
     id: "5",
@@ -105,6 +139,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "inspiration",
     createdAt: "2024-01-11",
     isFavorite: false,
+    hasDarkIcon: true,
   },
   {
     id: "6",
@@ -115,6 +150,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "dev",
     createdAt: "2024-01-10",
     isFavorite: true,
+    hasDarkIcon: true,
   },
   {
     id: "7",
@@ -126,6 +162,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "dev",
     createdAt: "2024-01-09",
     isFavorite: false,
+    hasDarkIcon: true,
   },
   {
     id: "8",
@@ -147,6 +184,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "tools",
     createdAt: "2024-01-07",
     isFavorite: false,
+    hasDarkIcon: true,
   },
   {
     id: "10",
@@ -168,6 +206,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "tools",
     createdAt: "2024-01-05",
     isFavorite: true,
+    hasDarkIcon: true,
   },
   {
     id: "12",
@@ -191,6 +230,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "inspiration",
     createdAt: "2024-01-03",
     isFavorite: false,
+    hasDarkIcon: true,
   },
   {
     id: "14",
@@ -202,6 +242,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "reading",
     createdAt: "2024-01-02",
     isFavorite: false,
+    hasDarkIcon: true,
   },
   {
     id: "15",
@@ -213,6 +254,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "reading",
     createdAt: "2024-01-01",
     isFavorite: false,
+    hasDarkIcon: true,
   },
   {
     id: "16",
