@@ -1,8 +1,8 @@
 "use client";
 
-import { Bookmark, Star, Tag, FolderOpen } from "lucide-react";
+import { Bookmark, Star, FolderOpen } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections, tags } from "@/mock-data/bookmarks";
+import { collections } from "@/mock-data/bookmarks";
 
 const stats = [
   {
@@ -20,11 +20,6 @@ const stats = [
     icon: FolderOpen,
     color: "bg-violet-500/10 text-violet-500",
   },
-  {
-    label: "Tags Used",
-    icon: Tag,
-    color: "bg-emerald-500/10 text-emerald-500",
-  },
 ];
 
 export function StatsCards() {
@@ -34,11 +29,10 @@ export function StatsCards() {
     bookmarks.length,
     bookmarks.filter((b) => b.isFavorite).length,
     collections.length - 1,
-    tags.length,
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
       {stats.map((stat, index) => (
         <div
           key={stat.label}
@@ -58,4 +52,3 @@ export function StatsCards() {
     </div>
   );
 }
-

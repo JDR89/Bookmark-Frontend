@@ -16,12 +16,11 @@ import {
   Copy,
   Pencil,
   Trash2,
-  Tag,
   Archive,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { tags as allTags, type Bookmark } from "@/mock-data/bookmarks";
+import { type Bookmark } from "@/mock-data/bookmarks";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -34,7 +33,6 @@ export function BookmarkCard({
 }: BookmarkCardProps) {
   const { toggleFavorite, archiveBookmark, trashBookmark } =
     useBookmarksStore();
-  const bookmarkTags = allTags.filter((tag) => bookmark.tags.includes(tag.id));
 
   const handleCopyUrl = () => {
     navigator.clipboard.writeText(bookmark.url);
@@ -60,26 +58,6 @@ export function BookmarkCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="font-medium truncate">{bookmark.title}</h3>
-            {bookmarkTags.length > 0 && (
-              <div className="hidden sm:flex items-center gap-1">
-                {bookmarkTags.slice(0, 2).map((tag) => (
-                  <span
-                    key={tag.id}
-                    className={cn(
-                      "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
-                      tag.color
-                    )}
-                  >
-                    {tag.name}
-                  </span>
-                ))}
-                {bookmarkTags.length > 2 && (
-                  <span className="text-[10px] text-muted-foreground">
-                    +{bookmarkTags.length - 2}
-                  </span>
-                )}
-              </div>
-            )}
           </div>
           <p className="text-sm text-muted-foreground truncate">
             {bookmark.url}
@@ -116,10 +94,6 @@ export function BookmarkCard({
               <DropdownMenuItem>
                 <Pencil className="size-4 mr-2" />
                 Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Tag className="size-4 mr-2" />
-                Add Tags
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => archiveBookmark(bookmark.id)}>
@@ -179,10 +153,6 @@ export function BookmarkCard({
               <Pencil className="size-4 mr-2" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Tag className="size-4 mr-2" />
-              Add Tags
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => archiveBookmark(bookmark.id)}>
               <Archive className="size-4 mr-2" />
@@ -222,26 +192,6 @@ export function BookmarkCard({
           <p className="text-sm text-muted-foreground line-clamp-2">
             {bookmark.description}
           </p>
-          {bookmarkTags.length > 0 && (
-            <div className="flex flex-wrap gap-1 pt-1">
-              {bookmarkTags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag.id}
-                  className={cn(
-                    "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium",
-                    tag.color
-                  )}
-                >
-                  {tag.name}
-                </span>
-              ))}
-              {bookmarkTags.length > 3 && (
-                <span className="text-[10px] text-muted-foreground py-0.5">
-                  +{bookmarkTags.length - 3} more
-                </span>
-              )}
-            </div>
-          )}
         </div>
       </button>
     </div>

@@ -3,21 +3,18 @@ import { bookmarks as initialBookmarks, type Bookmark } from "@/mock-data/bookma
 
 type ViewMode = "grid" | "list";
 type SortBy = "date-newest" | "date-oldest" | "alpha-az" | "alpha-za";
-type FilterType = "all" | "favorites" | "with-tags" | "without-tags";
+type FilterType = "all" | "favorites";
 
 interface BookmarksState {
   bookmarks: Bookmark[];
   archivedBookmarks: Bookmark[];
   trashedBookmarks: Bookmark[];
   selectedCollection: string;
-  selectedTags: string[];
   searchQuery: string;
   viewMode: ViewMode;
   sortBy: SortBy;
   filterType: FilterType;
   setSelectedCollection: (collectionId: string) => void;
-  toggleTag: (tagId: string) => void;
-  clearTags: () => void;
   setSearchQuery: (query: string) => void;
   setViewMode: (mode: ViewMode) => void;
   setSortBy: (sort: SortBy) => void;
@@ -39,22 +36,12 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   archivedBookmarks: [],
   trashedBookmarks: [],
   selectedCollection: "all",
-  selectedTags: [],
   searchQuery: "",
   viewMode: "grid",
   sortBy: "date-newest",
   filterType: "all",
 
   setSelectedCollection: (collectionId) => set({ selectedCollection: collectionId }),
-
-  toggleTag: (tagId) =>
-    set((state) => ({
-      selectedTags: state.selectedTags.includes(tagId)
-        ? state.selectedTags.filter((t) => t !== tagId)
-        : [...state.selectedTags, tagId],
-    })),
-
-  clearTags: () => set({ selectedTags: [] }),
 
   setSearchQuery: (query) => set({ searchQuery: query }),
 
@@ -126,12 +113,6 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
       filtered = filtered.filter((b) => b.collectionId === state.selectedCollection);
     }
 
-    if (state.selectedTags.length > 0) {
-      filtered = filtered.filter((b) =>
-        state.selectedTags.some((tag) => b.tags.includes(tag))
-      );
-    }
-
     if (state.searchQuery) {
       const query = state.searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -145,12 +126,6 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
     switch (state.filterType) {
       case "favorites":
         filtered = filtered.filter((b) => b.isFavorite);
-        break;
-      case "with-tags":
-        filtered = filtered.filter((b) => b.tags.length > 0);
-        break;
-      case "without-tags":
-        filtered = filtered.filter((b) => b.tags.length === 0);
         break;
     }
 

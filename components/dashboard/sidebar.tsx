@@ -44,12 +44,11 @@ import {
   Wrench,
   BookOpen,
   Sparkles,
-  Tag,
   Archive,
   Trash2,
 } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections, tags } from "@/mock-data/bookmarks";
+import { collections } from "@/mock-data/bookmarks";
 
 const collectionIcons: Record<string, React.ElementType> = {
   bookmark: Bookmark,
@@ -71,13 +70,9 @@ export function BookmarksSidebar({
 }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const [collectionsOpen, setCollectionsOpen] = React.useState(true);
-  const [tagsOpen, setTagsOpen] = React.useState(true);
   const {
     selectedCollection,
     setSelectedCollection,
-    selectedTags,
-    toggleTag,
-    clearTags,
   } = useBookmarksStore();
 
   const isHomePage = pathname === "/";
@@ -191,7 +186,6 @@ export function BookmarksSidebar({
                           href="/"
                           onClick={() => {
                             setSelectedCollection(collection.id);
-                            clearTags();
                           }}
                         >
                           <IconComponent className="size-5" />
@@ -208,55 +202,6 @@ export function BookmarksSidebar({
                   );
                 })}
               </SidebarMenu>
-            </SidebarGroupContent>
-          )}
-        </SidebarGroup>
-
-        <SidebarGroup className="p-0">
-          <SidebarGroupLabel className="flex items-center gap-1.5 px-0 text-[10px] font-semibold tracking-wider text-muted-foreground">
-            <button
-              onClick={() => setTagsOpen(!tagsOpen)}
-              className="flex items-center gap-1.5 cursor-pointer"
-            >
-              <ChevronDown
-                className={cn(
-                  "size-3.5 transition-transform",
-                  !tagsOpen && "-rotate-90"
-                )}
-              />
-              TAGS
-            </button>
-            {selectedTags.length > 0 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  clearTags();
-                }}
-                className="ml-auto text-[10px] text-muted-foreground hover:text-foreground"
-              >
-                Clear
-              </button>
-            )}
-          </SidebarGroupLabel>
-          {tagsOpen && (
-            <SidebarGroupContent>
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    onClick={() => toggleTag(tag.id)}
-                    className={cn(
-                      "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors",
-                      selectedTags.includes(tag.id)
-                        ? "bg-primary text-primary-foreground"
-                        : tag.color
-                    )}
-                  >
-                    <Tag className="size-3" />
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
             </SidebarGroupContent>
           )}
         </SidebarGroup>

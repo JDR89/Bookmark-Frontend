@@ -1,7 +1,7 @@
 "use client";
 
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections, tags } from "@/mock-data/bookmarks";
+import { collections } from "@/mock-data/bookmarks";
 import { BookmarkCard } from "./bookmark-card";
 import { StatsCards } from "./stats-cards";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,6 @@ export function BookmarksContent() {
     selectedCollection,
     getFilteredBookmarks,
     viewMode,
-    selectedTags,
-    toggleTag,
     filterType,
     setFilterType,
     sortBy,
@@ -24,9 +22,8 @@ export function BookmarksContent() {
     (c) => c.id === selectedCollection
   );
 
-  const activeTagsData = tags.filter((t) => selectedTags.includes(t.id));
   const hasActiveFilters =
-    selectedTags.length > 0 || filterType !== "all" || sortBy !== "date-newest";
+    filterType !== "all" || sortBy !== "date-newest";
 
   return (
     <div className="flex-1 w-full overflow-auto">
@@ -46,35 +43,17 @@ export function BookmarksContent() {
               </p>
             </div>
 
-            {(activeTagsData.length > 0 || filterType !== "all") && (
+            {filterType !== "all" && (
               <div className="flex flex-wrap items-center gap-2">
-                {filterType !== "all" && (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary">
-                    {filterType === "favorites" && "Favorites only"}
-                    {filterType === "with-tags" && "With tags"}
-                    {filterType === "without-tags" && "Without tags"}
-                    <button
-                      onClick={() => setFilterType("all")}
-                      className="hover:bg-primary/20 rounded-full p-0.5"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </span>
-                )}
-                {activeTagsData.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-primary text-primary-foreground"
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary">
+                  {filterType === "favorites" && "Favorites only"}
+                  <button
+                    onClick={() => setFilterType("all")}
+                    className="hover:bg-primary/20 rounded-full p-0.5"
                   >
-                    {tag.name}
-                    <button
-                      onClick={() => toggleTag(tag.id)}
-                      className="hover:bg-primary-foreground/20 rounded-full p-0.5"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </span>
-                ))}
+                    <X className="size-3" />
+                  </button>
+                </span>
               </div>
             )}
           </div>

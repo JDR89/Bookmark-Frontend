@@ -5,7 +5,6 @@ export type Bookmark = {
   description: string;
   favicon: string;
   collectionId: string;
-  tags: string[];
   createdAt: string;
   isFavorite: boolean;
   hasDarkIcon?: boolean;
@@ -15,13 +14,6 @@ export type Collection = {
   id: string;
   name: string;
   icon: string;
-  color: string;
-  count: number;
-};
-
-export type Tag = {
-  id: string;
-  name: string;
   color: string;
   count: number;
 };
@@ -59,57 +51,6 @@ export const collections: Collection[] = [
   },
 ];
 
-export const tags: Tag[] = [
-  {
-    id: "react",
-    name: "React",
-    color: "bg-blue-500/10 text-blue-500",
-    count: 8,
-  },
-  {
-    id: "typescript",
-    name: "TypeScript",
-    color: "bg-blue-600/10 text-blue-600",
-    count: 6,
-  },
-  {
-    id: "ui",
-    name: "UI/UX",
-    color: "bg-violet-500/10 text-violet-500",
-    count: 5,
-  },
-  {
-    id: "nextjs",
-    name: "Next.js",
-    color: "bg-foreground/10 text-foreground",
-    count: 4,
-  },
-  {
-    id: "tailwind",
-    name: "Tailwind",
-    color: "bg-cyan-500/10 text-cyan-500",
-    count: 7,
-  },
-  {
-    id: "tutorial",
-    name: "Tutorial",
-    color: "bg-emerald-500/10 text-emerald-500",
-    count: 3,
-  },
-  {
-    id: "docs",
-    name: "Documentation",
-    color: "bg-amber-500/10 text-amber-500",
-    count: 5,
-  },
-  {
-    id: "free",
-    name: "Free",
-    color: "bg-green-500/10 text-green-500",
-    count: 4,
-  },
-];
-
 export const bookmarks: Bookmark[] = [
   {
     id: "1",
@@ -119,7 +60,6 @@ export const bookmarks: Bookmark[] = [
       "Beautifully designed components built with Radix UI and Tailwind CSS.",
     favicon: "https://www.google.com/s2/favicons?domain=ui.shadcn.com&sz=64",
     collectionId: "dev",
-    tags: ["react", "ui", "tailwind"],
     createdAt: "2024-01-15",
     isFavorite: true,
     hasDarkIcon: true,
@@ -132,7 +72,6 @@ export const bookmarks: Bookmark[] = [
       "Develop. Preview. Ship. The best frontend developer experience.",
     favicon: "https://www.google.com/s2/favicons?domain=vercel.com&sz=64",
     collectionId: "dev",
-    tags: ["nextjs"],
     createdAt: "2024-01-14",
     isFavorite: true,
     hasDarkIcon: true,
@@ -144,7 +83,6 @@ export const bookmarks: Bookmark[] = [
     description: "A utility-first CSS framework for rapid UI development.",
     favicon: "https://www.google.com/s2/favicons?domain=tailwindcss.com&sz=64",
     collectionId: "dev",
-    tags: ["tailwind", "docs"],
     createdAt: "2024-01-13",
     isFavorite: false,
   },
@@ -155,7 +93,6 @@ export const bookmarks: Bookmark[] = [
     description: "The collaborative interface design tool.",
     favicon: "https://www.google.com/s2/favicons?domain=figma.com&sz=64",
     collectionId: "design",
-    tags: ["ui", "free"],
     createdAt: "2024-01-12",
     isFavorite: true,
   },
@@ -166,7 +103,6 @@ export const bookmarks: Bookmark[] = [
     description: "Discover the world's top designers & creatives.",
     favicon: "https://www.google.com/s2/favicons?domain=dribbble.com&sz=64",
     collectionId: "inspiration",
-    tags: ["ui"],
     createdAt: "2024-01-11",
     isFavorite: false,
   },
@@ -177,7 +113,6 @@ export const bookmarks: Bookmark[] = [
     description: "The library for web and native user interfaces.",
     favicon: "https://www.google.com/s2/favicons?domain=react.dev&sz=64",
     collectionId: "dev",
-    tags: ["react", "docs", "tutorial"],
     createdAt: "2024-01-10",
     isFavorite: true,
   },
@@ -189,7 +124,6 @@ export const bookmarks: Bookmark[] = [
     favicon:
       "https://www.google.com/s2/favicons?domain=typescriptlang.org&sz=64",
     collectionId: "dev",
-    tags: ["typescript", "docs"],
     createdAt: "2024-01-09",
     isFavorite: false,
   },
@@ -200,7 +134,6 @@ export const bookmarks: Bookmark[] = [
     description: "The React Framework for the Web.",
     favicon: "https://www.google.com/s2/favicons?domain=nextjs.org&sz=64",
     collectionId: "dev",
-    tags: ["nextjs", "react", "docs"],
     createdAt: "2024-01-08",
     isFavorite: true,
     hasDarkIcon: true,
@@ -212,7 +145,6 @@ export const bookmarks: Bookmark[] = [
     description: "Beautiful & consistent icon toolkit made by the community.",
     favicon: "https://www.google.com/s2/favicons?domain=lucide.dev&sz=64",
     collectionId: "tools",
-    tags: ["ui", "free"],
     createdAt: "2024-01-07",
     isFavorite: false,
   },
@@ -223,7 +155,6 @@ export const bookmarks: Bookmark[] = [
     description: "Unstyled, accessible components for building design systems.",
     favicon: "https://www.google.com/s2/favicons?domain=radix-ui.com&sz=64",
     collectionId: "dev",
-    tags: ["react", "ui"],
     createdAt: "2024-01-06",
     isFavorite: false,
     hasDarkIcon: true,
@@ -235,7 +166,6 @@ export const bookmarks: Bookmark[] = [
     description: "The issue tracking tool you'll enjoy using.",
     favicon: "https://www.google.com/s2/favicons?domain=linear.app&sz=64",
     collectionId: "tools",
-    tags: [],
     createdAt: "2024-01-05",
     isFavorite: true,
   },
@@ -247,7 +177,6 @@ export const bookmarks: Bookmark[] = [
       "The all-in-one workspace for your notes, tasks, wikis, and databases.",
     favicon: "https://www.google.com/s2/favicons?domain=notion.so&sz=64",
     collectionId: "tools",
-    tags: ["free"],
     createdAt: "2024-01-04",
     isFavorite: false,
     hasDarkIcon: true,
@@ -260,7 +189,6 @@ export const bookmarks: Bookmark[] = [
       "The awards of design, creativity and innovation on the internet.",
     favicon: "https://www.google.com/s2/favicons?domain=awwwards.com&sz=64",
     collectionId: "inspiration",
-    tags: ["ui"],
     createdAt: "2024-01-03",
     isFavorite: false,
   },
@@ -272,7 +200,6 @@ export const bookmarks: Bookmark[] = [
     favicon:
       "https://www.google.com/s2/favicons?domain=frontendmasters.com&sz=64",
     collectionId: "reading",
-    tags: ["tutorial", "react", "typescript"],
     createdAt: "2024-01-02",
     isFavorite: false,
   },
@@ -284,7 +211,6 @@ export const bookmarks: Bookmark[] = [
       "Daily articles about CSS, HTML, JavaScript, and all things web design.",
     favicon: "https://www.google.com/s2/favicons?domain=css-tricks.com&sz=64",
     collectionId: "reading",
-    tags: ["tutorial", "tailwind"],
     createdAt: "2024-01-01",
     isFavorite: false,
   },
@@ -295,7 +221,6 @@ export const bookmarks: Bookmark[] = [
     description: "Ship sites with unmatched speed and style.",
     favicon: "https://www.google.com/s2/favicons?domain=framer.com&sz=64",
     collectionId: "design",
-    tags: ["ui"],
     createdAt: "2023-12-31",
     isFavorite: true,
     hasDarkIcon: true,
