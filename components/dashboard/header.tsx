@@ -26,6 +26,7 @@ import {
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { AddBookmarkModal } from "./addBookmarkModal";
 
 interface BookmarksHeaderProps {
   title?: string;
@@ -165,10 +166,7 @@ export function BookmarksHeader({ title = "Bookmarks" }: BookmarksHeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button size="sm" className="hidden sm:flex">
-            <Plus className="size-4" />
-            Add Bookmark
-          </Button>
+          <AddBookmarkModal />
 
           <Separator orientation="vertical" className="h-5 hidden sm:block" />
 
@@ -176,7 +174,7 @@ export function BookmarksHeader({ title = "Bookmarks" }: BookmarksHeaderProps) {
 
           <Button variant="ghost" size="icon" asChild>
             <Link
-              href="https://github.com/ln-dev7/square-ui"
+              href="https://github.com/jdr89"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -31,6 +31,7 @@ interface BookmarksState {
   getFavoriteBookmarks: () => Bookmark[];
   getArchivedBookmarks: () => Bookmark[];
   getTrashedBookmarks: () => Bookmark[];
+  addBookmark: (bookmark: { title: string; url: string; collectionId?: string; description?: string; icon?: string }) => void;
 }
 
 import { collections as allCollections } from "@/mock-data/bookmarks";
@@ -230,4 +231,21 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
     return filtered;
   },
+
+  addBookmark: ({ title, url, collectionId, description, icon }) =>
+    set((state) => {
+      const newBookmark: Bookmark = {
+        id: crypto.randomUUID(),
+        title,
+        url,
+        description: description || "", // Si no hay descripción, string vacío
+        favicon: icon || "link", // Default a "link" si no se proporciona
+        collectionId: collectionId || (state.selectedCollection === "all" ? "reading" : state.selectedCollection),
+        createdAt: new Date().toISOString().split("T")[0],
+        isFavorite: false,
+        hasDarkIcon: false,
+      };
+
+      return { bookmarks: [newBookmark, ...state.bookmarks] };
+    }),
 }));
