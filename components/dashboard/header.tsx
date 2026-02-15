@@ -26,7 +26,7 @@ import {
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { AddBookmarkModal } from "./addBookmarkModal";
+import { BookmarkModal } from "./bookmarkModal";
 
 interface BookmarksHeaderProps {
   title?: string;
@@ -166,7 +166,7 @@ export function BookmarksHeader({ title = "Bookmarks" }: BookmarksHeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <AddBookmarkModal />
+          <BookmarkModal />
 
           <Separator orientation="vertical" className="h-5 hidden sm:block" />
 

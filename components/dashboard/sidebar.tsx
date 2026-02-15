@@ -16,7 +16,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,9 +29,7 @@ import {
   Bookmark,
   ChevronDown,
   ChevronRight,
-  Search,
   Settings,
-  Globe,
   Plus,
   Check,
   User,
@@ -150,16 +147,7 @@ export function BookmarksSidebar({
       </SidebarHeader>
 
       <SidebarContent className="px-5 pt-5">
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-          <Input
-            placeholder="Search Bookmarks..."
-            className="pl-9 pr-10 h-9 bg-background"
-          />
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 bg-muted px-1.5 py-0.5 rounded text-[11px] text-muted-foreground font-medium">
-            ⌘K
-          </div>
-        </div>
+
 
         <SidebarGroup className="p-0">
           <SidebarGroupLabel className="flex items-center gap-1.5 px-0 text-[10px] font-semibold tracking-wider text-muted-foreground">
@@ -255,17 +243,9 @@ export function BookmarksSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="px-5 pb-5">
-        <Link
-          href="https://github.com/ln-dev7/square-ui"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 h-9 px-4 rounded-md border border-border bg-background hover:bg-muted shadow-xs text-sm font-medium w-full"
-        >
-          <Globe className="size-4" />
-          square.lndev.me
-        </Link>
-      </SidebarFooter>
+      {/* <SidebarFooter className="px-5 pb-5">
+
+      </SidebarFooter> */}
     </Sidebar>
   );
 }

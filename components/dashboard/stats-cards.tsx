@@ -23,12 +23,22 @@ const stats = [
 ];
 
 export function StatsCards() {
-  const { bookmarks } = useBookmarksStore();
+  const { bookmarks, selectedWorkspace } = useBookmarksStore();
+
+  const workspaceCollections = collections.filter(
+    (c) => c.workspaceId === selectedWorkspace
+  );
+
+  const workspaceCollectionIds = workspaceCollections.map((c) => c.id);
+
+  const workspaceBookmarks = bookmarks.filter((b) =>
+    workspaceCollectionIds.includes(b.collectionId)
+  );
 
   const values = [
-    bookmarks.length,
-    bookmarks.filter((b) => b.isFavorite).length,
-    collections.length - 1,
+    workspaceBookmarks.length,
+    workspaceBookmarks.filter((b) => b.isFavorite).length,
+    workspaceCollections.length,
   ];
 
   return (

@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Archive, MoreHorizontal, RotateCcw, Trash2, ExternalLink } from "lucide-react";
+import { Archive, MoreHorizontal, RotateCcw, Trash2, ExternalLink, Link, Code, Book, Image as ImageIcon, Briefcase, Sparkles, Star } from "lucide-react";
 import Image from "next/image";
 import { type Bookmark } from "@/mock-data/bookmarks";
 import { cn } from "@/lib/utils";
@@ -17,16 +17,37 @@ import { cn } from "@/lib/utils";
 function ArchivedBookmarkCard({ bookmark }: { bookmark: Bookmark }) {
   const { restoreFromArchive, trashBookmark } = useBookmarksStore();
 
-  return (
-    <div className="group flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-      <div className="size-10 rounded-lg bg-muted flex items-center justify-center overflow-hidden shrink-0">
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case "code": return <Code className="size-6 text-muted-foreground" />;
+      case "book": return <Book className="size-6 text-muted-foreground" />;
+      case "image": return <ImageIcon className="size-6 text-muted-foreground" />;
+      case "briefcase": return <Briefcase className="size-6 text-muted-foreground" />;
+      case "sparkles": return <Sparkles className="size-6 text-muted-foreground" />;
+      case "star": return <Star className="size-6 text-muted-foreground" />;
+      case "link": default: return <Link className="size-6 text-muted-foreground" />;
+    }
+  };
+
+  const renderIcon = (favicon: string) => {
+    if (favicon.startsWith("http")) {
+      return (
         <Image
           src={bookmark.favicon}
           alt={bookmark.title}
           width={24}
           height={24}
-          className={cn("size-6", bookmark.hasDarkIcon && "dark:invert")}
+          className={cn("size-6 grayscale", bookmark.hasDarkIcon && "dark:invert")}
         />
+      );
+    }
+    return getIcon(favicon);
+  };
+
+  return (
+    <div className="group flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+      <div className="size-10 rounded-lg bg-muted flex items-center justify-center overflow-hidden shrink-0">
+        {renderIcon(bookmark.favicon)}
       </div>
 
       <div className="flex-1 min-w-0">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Plus, Link, Code, Book, Image as ImageIcon, Briefcase } from "lucide-react";
+import { Plus, Link, Code, Book, Image as ImageIcon, Briefcase, Sparkles, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,23 +32,23 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections } from "@/mock-data/bookmarks";
+import { collections, type Bookmark } from "@/mock-data/bookmarks";
 
 
 // 1. Definir el esquema de validación
 const formSchema = z.object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-    url: z.string().url("Introduce una URL válida"),
+    url: z.url("Introduce una URL válida"),
     description: z.string().optional(),
     icon: z.string().optional(),
     collectionId: z.string().min(1, "Selecciona una colección"),
 });
 
-export function AddBookmarkModal() {
+export function BookmarkModal({ children, bookmarkToEdit }: { children?: React.ReactNode; bookmarkToEdit?: Bookmark }) {
     const [open, setOpen] = useState(false);
 
-
     const addBookmark = useBookmarksStore((state) => state.addBookmark);
+    const updateBookmark = useBookmarksStore((state) => state.updateBookmark);
     const selectedCollection = useBookmarksStore((state) => state.selectedCollection);
     const selectedWorkspace = useBookmarksStore((state) => state.selectedWorkspace);
 
@@ -58,6 +58,8 @@ export function AddBookmarkModal() {
     );
 
     const icons = [
+        { name: "sparkles", icon: Sparkles },
+        { name: "star", icon: Star },
         { name: "link", icon: Link },
         { name: "code", icon: Code },
         { name: "book", icon: Book },
@@ -66,26 +68,38 @@ export function AddBookmarkModal() {
     ];
 
     // 2. Definir el formulario
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            url: "",
-            description: "",
-            icon: "link",
-            collectionId: selectedCollection === "all" ? "" : selectedCollection,
+            name: bookmarkToEdit?.title || "",
+            url: bookmarkToEdit?.url || "",
+            description: bookmarkToEdit?.description || "",
+            icon: bookmarkToEdit?.favicon && !bookmarkToEdit.favicon.startsWith("http") ? bookmarkToEdit.favicon : "link",
+            collectionId: bookmarkToEdit?.collectionId || (selectedCollection === "all" ? "" : selectedCollection),
         },
     });
 
     // 3. Manejador de envío
+
     function onSubmit(values: z.infer<typeof formSchema>) {
-        addBookmark({
-            title: values.name,
-            url: values.url,
-            collectionId: values.collectionId,
-            description: values.description,
-            icon: values.icon,
-        });
+        if (bookmarkToEdit) {
+            updateBookmark(bookmarkToEdit.id, {
+                title: values.name,
+                url: values.url,
+                collectionId: values.collectionId,
+                description: values.description,
+                favicon: values.icon,
+            });
+        } else {
+            addBookmark({
+                title: values.name,
+                url: values.url,
+                collectionId: values.collectionId,
+                description: values.description,
+                icon: values.icon,
+            });
+        }
 
         setOpen(false);
         form.reset();
@@ -94,10 +108,14 @@ export function AddBookmarkModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" className="hidden sm:flex gap-2">
-                    <Plus className="size-4" />
-                    Add Bookmark
-                </Button>
+                {children ? (
+                    children
+                ) : (
+                    <Button size="sm" className="hidden sm:flex gap-2">
+                        <Plus className="size-4" />
+                        Add Bookmark
+                    </Button>
+                )}
             </DialogTrigger>
 
             <DialogContent
@@ -105,9 +123,9 @@ export function AddBookmarkModal() {
                 onCloseAutoFocus={(e) => e.preventDefault()}
             >
                 <DialogHeader>
-                    <DialogTitle>Add New Bookmark</DialogTitle>
+                    <DialogTitle>{bookmarkToEdit ? "Edit Bookmark" : "Add New Bookmark"}</DialogTitle>
                     <DialogDescription>
-                        Enter the details of the website you want to save.
+                        {bookmarkToEdit ? "Make changes to your bookmark here." : "Enter the details of the website you want to save."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -217,7 +235,7 @@ export function AddBookmarkModal() {
                         />
 
                         <div className="flex justify-end pt-4">
-                            <Button type="submit">Save Bookmark</Button>
+                            <Button type="submit">{bookmarkToEdit ? "Save Changes" : "Save Bookmark"}</Button>
                         </div>
                     </form>
                 </Form>

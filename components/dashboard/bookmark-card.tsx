@@ -22,9 +22,12 @@ import {
   Book,
   Image as ImageIcon,
   Briefcase,
+  Sparkles,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBookmarksStore } from "@/store/bookmarks-store";
+import { BookmarkModal } from "./bookmarkModal";
 import { type Bookmark } from "@/mock-data/bookmarks";
 
 interface BookmarkCardProps {
@@ -53,6 +56,8 @@ export function BookmarkCard({
       case "book": return <Book className="size-6 text-primary" />;
       case "image": return <ImageIcon className="size-6 text-primary" />;
       case "briefcase": return <Briefcase className="size-6 text-primary" />;
+      case "sparkles": return <Sparkles className="size-6 text-primary" />;
+      case "star": return <Star className="size-6 text-primary" />;
       case "link": default: return <Link className="size-6 text-primary" />;
     }
   };
@@ -115,10 +120,12 @@ export function BookmarkCard({
                 <Copy className="size-4 mr-2" />
                 Copy URL
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Pencil className="size-4 mr-2" />
-                Edit
-              </DropdownMenuItem>
+              <BookmarkModal bookmarkToEdit={bookmark}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <Pencil className="size-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+              </BookmarkModal>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => archiveBookmark(bookmark.id)}>
                 <Archive className="size-4 mr-2" />
@@ -173,10 +180,12 @@ export function BookmarkCard({
               <ExternalLink className="size-4 mr-2" />
               Open in new tab
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Pencil className="size-4 mr-2" />
-              Edit
-            </DropdownMenuItem>
+            <BookmarkModal bookmarkToEdit={bookmark}>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <Pencil className="size-4 mr-2" />
+                Edit
+              </DropdownMenuItem>
+            </BookmarkModal>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => archiveBookmark(bookmark.id)}>
               <Archive className="size-4 mr-2" />

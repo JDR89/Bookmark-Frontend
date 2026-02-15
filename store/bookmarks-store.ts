@@ -31,6 +31,7 @@ interface BookmarksState {
   getFavoriteBookmarks: () => Bookmark[];
   getArchivedBookmarks: () => Bookmark[];
   getTrashedBookmarks: () => Bookmark[];
+  updateBookmark: (id: string, updates: Partial<Bookmark>) => void;
   addBookmark: (bookmark: { title: string; url: string; collectionId?: string; description?: string; icon?: string }) => void;
 }
 
@@ -112,6 +113,13 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   permanentlyDelete: (bookmarkId) =>
     set((state) => ({
       trashedBookmarks: state.trashedBookmarks.filter((b) => b.id !== bookmarkId),
+    })),
+
+  updateBookmark: (id, updates) =>
+    set((state) => ({
+      bookmarks: state.bookmarks.map((b) =>
+        b.id === id ? { ...b, ...updates } : b
+      ),
     })),
 
   getFilteredBookmarks: () => {
