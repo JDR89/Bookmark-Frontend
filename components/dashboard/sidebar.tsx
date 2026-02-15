@@ -43,9 +43,13 @@ import {
   Sparkles,
   Archive,
   Trash2,
+  Briefcase,
+  Image as ImageIcon,
+  Link as LinkIcon,
 } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections, workspaces } from "@/mock-data/bookmarks";
+import { workspaces } from "@/mock-data/bookmarks";
+import { CollectionModal } from "@/components/dashboard/collection-modal";
 
 const collectionIcons: Record<string, React.ElementType> = {
   bookmark: Bookmark,
@@ -54,6 +58,10 @@ const collectionIcons: Record<string, React.ElementType> = {
   wrench: Wrench,
   "book-open": BookOpen,
   sparkles: Sparkles,
+  star: Star,
+  briefcase: Briefcase,
+  image: ImageIcon,
+  link: LinkIcon,
 };
 
 const navItems = [
@@ -72,6 +80,8 @@ export function BookmarksSidebar({
     setSelectedCollection,
     selectedWorkspace,
     setSelectedWorkspace,
+    collections,
+    bookmarks,
   } = useBookmarksStore();
 
   const isHomePage = pathname === "/";
@@ -190,6 +200,9 @@ export function BookmarksSidebar({
                     collectionIcons[collection.icon] || Folder;
                   const isActive =
                     isHomePage && selectedCollection === collection.id;
+                  const count = bookmarks.filter(
+                    (b) => b.collectionId === collection.id
+                  ).length;
                   return (
                     <SidebarMenuItem key={collection.id}>
                       <SidebarMenuButton
@@ -206,7 +219,7 @@ export function BookmarksSidebar({
                           <IconComponent className="size-5" />
                           <span className="flex-1">{collection.name}</span>
                           <span className="text-muted-foreground text-xs">
-                            {collection.count}
+                            {count}
                           </span>
                           {isActive && (
                             <ChevronRight className="size-4 text-muted-foreground opacity-60" />
@@ -216,6 +229,10 @@ export function BookmarksSidebar({
                     </SidebarMenuItem>
                   );
                 })}
+
+                <SidebarMenuItem >
+                  <CollectionModal />
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           )}

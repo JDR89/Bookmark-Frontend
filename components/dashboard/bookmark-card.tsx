@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { BookmarkModal } from "./bookmarkModal";
+import { BookmarkModal } from "./bookmark-modal";
 import { type Bookmark } from "@/mock-data/bookmarks";
 
 interface BookmarkCardProps {

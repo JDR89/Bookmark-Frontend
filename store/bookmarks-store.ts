@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { bookmarks as initialBookmarks, type Bookmark } from "@/mock-data/bookmarks";
+import { bookmarks as initialBookmarks, collections as initialCollections, type Bookmark, type Collection } from "@/mock-data/bookmarks";
 
 type ViewMode = "grid" | "list";
 type SortBy = "date-newest" | "date-oldest" | "alpha-az" | "alpha-za";
@@ -7,6 +7,7 @@ type FilterType = "all" | "favorites";
 
 interface BookmarksState {
   bookmarks: Bookmark[];
+  collections: Collection[];
   archivedBookmarks: Bookmark[];
   trashedBookmarks: Bookmark[];
   selectedWorkspace: string;
@@ -33,12 +34,15 @@ interface BookmarksState {
   getTrashedBookmarks: () => Bookmark[];
   updateBookmark: (id: string, updates: Partial<Bookmark>) => void;
   addBookmark: (bookmark: { title: string; url: string; collectionId?: string; description?: string; icon?: string }) => void;
+  addCollection: (collection: { name: string; workspaceId: string; icon?: string }) => void;
+  deleteCollection: (collectionId: string) => void;
 }
 
 import { collections as allCollections } from "@/mock-data/bookmarks";
 
 export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   bookmarks: initialBookmarks,
+  collections: initialCollections,
   archivedBookmarks: [],
   trashedBookmarks: [],
   selectedWorkspace: "personal",
@@ -127,7 +131,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
     let filtered = [...state.bookmarks];
 
     // 1. Filter by Workspace first
-    const workspaceCollectionIds = allCollections
+    const workspaceCollectionIds = state.collections
       .filter((c) => c.workspaceId === state.selectedWorkspace)
       .map((c) => c.id);
 
@@ -176,7 +180,16 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
   getFavoriteBookmarks: () => {
     const state = get();
-    let filtered = state.bookmarks.filter((b) => b.isFavorite);
+
+    // Get collections for the current workspace
+    const workspaceCollectionIds = state.collections
+      .filter((c) => c.workspaceId === state.selectedWorkspace)
+      .map((c) => c.id);
+
+    // Filter bookmarks: favorites AND belong to a collection in current workspace
+    let filtered = state.bookmarks.filter(
+      (b) => b.isFavorite && workspaceCollectionIds.includes(b.collectionId)
+    );
 
     if (state.searchQuery) {
       const query = state.searchQuery.toLowerCase();
@@ -256,4 +269,23 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
       return { bookmarks: [newBookmark, ...state.bookmarks] };
     }),
+
+  addCollection: ({ name, workspaceId, icon }) =>
+    set((state) => {
+      const newCollection: Collection = {
+        id: name.toLowerCase().replace(/\s+/g, "-") + "-" + crypto.randomUUID().slice(0, 4),
+        workspaceId,
+        name,
+        icon: icon || "folder",
+        color: "blue", // Default color
+      };
+      return { collections: [...state.collections, newCollection] };
+    }),
+
+  deleteCollection: (collectionId) =>
+    set((state) => ({
+      collections: state.collections.filter((c) => c.id !== collectionId),
+      bookmarks: state.bookmarks.filter((b) => b.collectionId !== collectionId),
+      selectedCollection: "all", // Reset selection to 'all' after deletion
+    })),
 }));

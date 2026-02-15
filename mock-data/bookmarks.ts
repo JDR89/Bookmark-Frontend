@@ -23,7 +23,6 @@ export type Collection = {
   name: string;
   icon: string;
   color: string;
-  count: number;
 };
 
 export const workspaces: Workspace[] = [
@@ -48,7 +47,6 @@ export const collections: Collection[] = [
     name: "Design Resources",
     icon: "palette",
     color: "violet",
-    count: 8,
   },
   {
     id: "dev",
@@ -56,7 +54,6 @@ export const collections: Collection[] = [
     name: "Development",
     icon: "code",
     color: "blue",
-    count: 7,
   },
   {
     id: "tools",
@@ -64,7 +61,6 @@ export const collections: Collection[] = [
     name: "Tools",
     icon: "wrench",
     color: "amber",
-    count: 6,
   },
   {
     id: "reading",
@@ -72,7 +68,6 @@ export const collections: Collection[] = [
     name: "Reading List",
     icon: "book-open",
     color: "emerald",
-    count: 4,
   },
   {
     id: "inspiration",
@@ -80,7 +75,6 @@ export const collections: Collection[] = [
     name: "Inspiration",
     icon: "sparkles",
     color: "pink",
-    count: 5,
   },
 ];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,7 +32,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections, type Bookmark } from "@/mock-data/bookmarks";
+import { type Bookmark } from "@/mock-data/bookmarks";
 
 
 // 1. Definir el esquema de validación
@@ -51,11 +51,13 @@ export function BookmarkModal({ children, bookmarkToEdit }: { children?: React.R
     const updateBookmark = useBookmarksStore((state) => state.updateBookmark);
     const selectedCollection = useBookmarksStore((state) => state.selectedCollection);
     const selectedWorkspace = useBookmarksStore((state) => state.selectedWorkspace);
+    const collections = useBookmarksStore((state) => state.collections);
 
     // Filtrar colecciones por el workspace actual
-    const workspaceCollections = collections.filter(
+    // Filtrar colecciones por el workspace actual
+    const workspaceCollections = useMemo(() => collections.filter(
         (c) => c.workspaceId === selectedWorkspace
-    );
+    ), [collections, selectedWorkspace]);
 
     const icons = [
         { name: "sparkles", icon: Sparkles },
@@ -79,6 +81,28 @@ export function BookmarkModal({ children, bookmarkToEdit }: { children?: React.R
             collectionId: bookmarkToEdit?.collectionId || (selectedCollection === "all" ? "" : selectedCollection),
         },
     });
+
+    useEffect(() => {
+        if (open) {
+            let defaultCollectionId = "";
+
+            if (bookmarkToEdit) {
+                defaultCollectionId = bookmarkToEdit.collectionId;
+            } else if (selectedCollection !== "all" && workspaceCollections.some(c => c.id === selectedCollection)) {
+                defaultCollectionId = selectedCollection;
+            } else if (workspaceCollections.length > 0) {
+                defaultCollectionId = workspaceCollections[0].id; // Default to first collection
+            }
+
+            form.reset({
+                name: bookmarkToEdit?.title || "",
+                url: bookmarkToEdit?.url || "",
+                description: bookmarkToEdit?.description || "",
+                icon: bookmarkToEdit?.favicon && !bookmarkToEdit.favicon.startsWith("http") ? bookmarkToEdit.favicon : "link",
+                collectionId: defaultCollectionId,
+            });
+        }
+    }, [open, bookmarkToEdit, selectedCollection, workspaceCollections, form]);
 
     // 3. Manejador de envío
 

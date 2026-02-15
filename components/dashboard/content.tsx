@@ -1,11 +1,11 @@
 "use client";
 
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { collections } from "@/mock-data/bookmarks";
+import { type Bookmark } from "@/mock-data/bookmarks";
 import { BookmarkCard } from "./bookmark-card";
 import { StatsCards } from "./stats-cards";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, Trash2 } from "lucide-react";
 
 export function BookmarksContent() {
   const {
@@ -15,6 +15,8 @@ export function BookmarksContent() {
     filterType,
     setFilterType,
     sortBy,
+    collections,
+    deleteCollection,
   } = useBookmarksStore();
   const filteredBookmarks = getFilteredBookmarks();
 
@@ -28,7 +30,7 @@ export function BookmarksContent() {
   return (
     <div className="flex-1 w-full overflow-auto">
       <div className="p-4 md:p-6 space-y-6">
-        <StatsCards />
+        {selectedCollection === "all" && <StatsCards />}
 
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -107,6 +109,18 @@ export function BookmarksContent() {
                   }}
                 >
                   Clear filters
+                </Button>
+              )}
+
+              {selectedCollection !== "all" && !hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => deleteCollection(selectedCollection)}
+                >
+                  <Trash2 className="size-4 mr-2" />
+                  Delete Collection
                 </Button>
               )}
             </div>

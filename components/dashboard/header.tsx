@@ -17,7 +17,6 @@ import {
   Search,
   LayoutGrid,
   List,
-  Plus,
   SlidersHorizontal,
   ArrowUpDown,
   Github,
@@ -26,7 +25,7 @@ import {
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { BookmarkModal } from "./bookmarkModal";
+import { BookmarkModal } from "./bookmark-modal";
 
 interface BookmarksHeaderProps {
   title?: string;
