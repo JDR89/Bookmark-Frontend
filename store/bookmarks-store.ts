@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { bookmarks as initialBookmarks, collections as initialCollections, type Bookmark, type Collection } from "@/mock-data/bookmarks";
+import { bookmarks as initialBookmarks, collections as initialCollections, workspaces as initialWorkspaces, type Bookmark, type Collection, type Workspace } from "@/mock-data/bookmarks";
 
 type ViewMode = "grid" | "list";
 type SortBy = "date-newest" | "date-oldest" | "alpha-az" | "alpha-za";
@@ -8,8 +8,7 @@ type FilterType = "all" | "favorites";
 interface BookmarksState {
   bookmarks: Bookmark[];
   collections: Collection[];
-  archivedBookmarks: Bookmark[];
-  trashedBookmarks: Bookmark[];
+  workspaces: Workspace[];
   selectedWorkspace: string;
   selectedCollection: string;
   searchQuery: string;
@@ -35,16 +34,18 @@ interface BookmarksState {
   updateBookmark: (id: string, updates: Partial<Bookmark>) => void;
   addBookmark: (bookmark: { title: string; url: string; collectionId?: string; description?: string; icon?: string }) => void;
   addCollection: (collection: { name: string; workspaceId: string; icon?: string }) => void;
+  addWorkspace: (workspace: { name: string; color: string }) => void;
+  deleteWorkspace: (workspaceId: string) => void;
   deleteCollection: (collectionId: string) => void;
 }
 
-import { collections as allCollections } from "@/mock-data/bookmarks";
+
 
 export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   bookmarks: initialBookmarks,
   collections: initialCollections,
-  archivedBookmarks: [],
-  trashedBookmarks: [],
+  workspaces: initialWorkspaces,
+
   selectedWorkspace: "personal",
   selectedCollection: "all",
   searchQuery: "",
@@ -75,48 +76,36 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
     })),
 
   archiveBookmark: (bookmarkId) =>
-    set((state) => {
-      const bookmark = state.bookmarks.find((b) => b.id === bookmarkId);
-      if (!bookmark) return state;
-      return {
-        bookmarks: state.bookmarks.filter((b) => b.id !== bookmarkId),
-        archivedBookmarks: [...state.archivedBookmarks, bookmark],
-      };
-    }),
+    set((state) => ({
+      bookmarks: state.bookmarks.map((b) =>
+        b.id === bookmarkId ? { ...b, status: "archived" } : b
+      ),
+    })),
 
   restoreFromArchive: (bookmarkId) =>
-    set((state) => {
-      const bookmark = state.archivedBookmarks.find((b) => b.id === bookmarkId);
-      if (!bookmark) return state;
-      return {
-        archivedBookmarks: state.archivedBookmarks.filter((b) => b.id !== bookmarkId),
-        bookmarks: [...state.bookmarks, bookmark],
-      };
-    }),
+    set((state) => ({
+      bookmarks: state.bookmarks.map((b) =>
+        b.id === bookmarkId ? { ...b, status: "active" } : b
+      ),
+    })),
 
   trashBookmark: (bookmarkId) =>
-    set((state) => {
-      const bookmark = state.bookmarks.find((b) => b.id === bookmarkId);
-      if (!bookmark) return state;
-      return {
-        bookmarks: state.bookmarks.filter((b) => b.id !== bookmarkId),
-        trashedBookmarks: [...state.trashedBookmarks, bookmark],
-      };
-    }),
+    set((state) => ({
+      bookmarks: state.bookmarks.map((b) =>
+        b.id === bookmarkId ? { ...b, status: "trashed" } : b
+      ),
+    })),
 
   restoreFromTrash: (bookmarkId) =>
-    set((state) => {
-      const bookmark = state.trashedBookmarks.find((b) => b.id === bookmarkId);
-      if (!bookmark) return state;
-      return {
-        trashedBookmarks: state.trashedBookmarks.filter((b) => b.id !== bookmarkId),
-        bookmarks: [...state.bookmarks, bookmark],
-      };
-    }),
+    set((state) => ({
+      bookmarks: state.bookmarks.map((b) =>
+        b.id === bookmarkId ? { ...b, status: "active" } : b
+      ),
+    })),
 
   permanentlyDelete: (bookmarkId) =>
     set((state) => ({
-      trashedBookmarks: state.trashedBookmarks.filter((b) => b.id !== bookmarkId),
+      bookmarks: state.bookmarks.filter((b) => b.id !== bookmarkId),
     })),
 
   updateBookmark: (id, updates) =>
@@ -128,7 +117,8 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
   getFilteredBookmarks: () => {
     const state = get();
-    let filtered = [...state.bookmarks];
+    // Only show active bookmarks in the main view
+    let filtered = state.bookmarks.filter((b) => b.status === "active");
 
     // 1. Filter by Workspace first
     const workspaceCollectionIds = state.collections
@@ -186,9 +176,9 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
       .filter((c) => c.workspaceId === state.selectedWorkspace)
       .map((c) => c.id);
 
-    // Filter bookmarks: favorites AND belong to a collection in current workspace
+    // Filter bookmarks: favorites AND belong to a collection in current workspace AND are active
     let filtered = state.bookmarks.filter(
-      (b) => b.isFavorite && workspaceCollectionIds.includes(b.collectionId)
+      (b) => b.isFavorite && workspaceCollectionIds.includes(b.collectionId) && b.status === "active"
     );
 
     if (state.searchQuery) {
@@ -221,7 +211,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
   getArchivedBookmarks: () => {
     const state = get();
-    let filtered = [...state.archivedBookmarks];
+    let filtered = state.bookmarks.filter((b) => b.status === "archived");
 
     if (state.searchQuery) {
       const query = state.searchQuery.toLowerCase();
@@ -238,7 +228,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
 
   getTrashedBookmarks: () => {
     const state = get();
-    let filtered = [...state.trashedBookmarks];
+    let filtered = state.bookmarks.filter((b) => b.status === "trashed");
 
     if (state.searchQuery) {
       const query = state.searchQuery.toLowerCase();
@@ -256,7 +246,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   addBookmark: ({ title, url, collectionId, description, icon }) =>
     set((state) => {
       const newBookmark: Bookmark = {
-        id: crypto.randomUUID(),
+        id: Math.random().toString(36).substring(2, 15),
         title,
         url,
         description: description || "", // Si no hay descripción, string vacío
@@ -265,6 +255,7 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
         createdAt: new Date().toISOString().split("T")[0],
         isFavorite: false,
         hasDarkIcon: false,
+        status: "active",
       };
 
       return { bookmarks: [newBookmark, ...state.bookmarks] };
@@ -273,19 +264,60 @@ export const useBookmarksStore = create<BookmarksState>((set, get) => ({
   addCollection: ({ name, workspaceId, icon }) =>
     set((state) => {
       const newCollection: Collection = {
-        id: name.toLowerCase().replace(/\s+/g, "-") + "-" + crypto.randomUUID().slice(0, 4),
+        id: name.toLowerCase().replace(/\s+/g, "-") + "-" + Math.random().toString(36).substring(2, 6),
         workspaceId,
         name,
         icon: icon || "folder",
-        color: "blue", // Default color
       };
       return { collections: [...state.collections, newCollection] };
+    }),
+
+  addWorkspace: ({ name, color }) =>
+    set((state) => {
+      if (state.workspaces.length >= 5) return state;
+
+      const newWorkspace: Workspace = {
+        id: name.toLowerCase().replace(/\s+/g, "-") + "-" + Math.random().toString(36).substring(2, 6),
+        name,
+        icon: "briefcase", // Default icon
+        color: color,
+        orderIndex: state.workspaces.length,
+      };
+
+
+      return {
+        workspaces: [...state.workspaces, newWorkspace],
+        selectedWorkspace: newWorkspace.id,
+        selectedCollection: "all"
+      };
+    }),
+
+  deleteWorkspace: (workspaceId) =>
+    set((state) => {
+      // Prevent deleting the last workspace
+      if (state.workspaces.length <= 1) return state;
+
+      const collectionIds = state.collections
+        .filter((c) => c.workspaceId === workspaceId)
+        .map((c) => c.id);
+
+      const remainingWorkspaces = state.workspaces.filter((w) => w.id !== workspaceId);
+
+      return {
+        workspaces: remainingWorkspaces,
+        collections: state.collections.filter((c) => c.workspaceId !== workspaceId),
+        bookmarks: state.bookmarks.filter((b) => !collectionIds.includes(b.collectionId)),
+        selectedWorkspace: state.selectedWorkspace === workspaceId
+          ? remainingWorkspaces[0].id
+          : state.selectedWorkspace,
+        selectedCollection: state.selectedWorkspace === workspaceId ? "all" : state.selectedCollection,
+      };
     }),
 
   deleteCollection: (collectionId) =>
     set((state) => ({
       collections: state.collections.filter((c) => c.id !== collectionId),
       bookmarks: state.bookmarks.filter((b) => b.collectionId !== collectionId),
-      selectedCollection: "all", // Reset selection to 'all' after deletion
+      selectedCollection: "all",
     })),
 }));

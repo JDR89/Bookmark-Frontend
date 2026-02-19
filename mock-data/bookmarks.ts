@@ -3,6 +3,7 @@ export type Workspace = {
   name: string;
   icon: string;
   orderIndex: number;
+  color: string;
 };
 
 export type Bookmark = {
@@ -15,14 +16,16 @@ export type Bookmark = {
   createdAt: string;
   isFavorite: boolean;
   hasDarkIcon?: boolean;
+  status: BookmarkStatus;
 };
+
+export type BookmarkStatus = 'active' | 'archived' | 'trashed';
 
 export type Collection = {
   id: string;
   workspaceId: string;
   name: string;
   icon: string;
-  color: string;
 };
 
 export const workspaces: Workspace[] = [
@@ -31,12 +34,14 @@ export const workspaces: Workspace[] = [
     name: "Personal",
     icon: "user",
     orderIndex: 0,
+    color: "blue",
   },
   {
     id: "work",
     name: "Work",
     icon: "briefcase",
     orderIndex: 1,
+    color: "violet",
   },
 ];
 
@@ -46,35 +51,35 @@ export const collections: Collection[] = [
     workspaceId: "work",
     name: "Design Resources",
     icon: "palette",
-    color: "violet",
+
   },
   {
     id: "dev",
     workspaceId: "work",
     name: "Development",
     icon: "code",
-    color: "blue",
+
   },
   {
     id: "tools",
     workspaceId: "work",
     name: "Tools",
     icon: "wrench",
-    color: "amber",
+
   },
   {
     id: "reading",
     workspaceId: "personal",
     name: "Reading List",
     icon: "book-open",
-    color: "emerald",
+
   },
   {
     id: "inspiration",
     workspaceId: "personal",
     name: "Inspiration",
     icon: "sparkles",
-    color: "pink",
+
   },
 ];
 
@@ -90,6 +95,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-15",
     isFavorite: true,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "2",
@@ -102,6 +108,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-14",
     isFavorite: true,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "3",
@@ -112,6 +119,7 @@ export const bookmarks: Bookmark[] = [
     collectionId: "dev",
     createdAt: "2024-01-13",
     isFavorite: false,
+    status: "active",
   },
   {
     id: "4",
@@ -123,6 +131,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-12",
     isFavorite: true,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "5",
@@ -134,6 +143,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-11",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "6",
@@ -145,6 +155,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-10",
     isFavorite: true,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "7",
@@ -156,6 +167,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-09",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "8",
@@ -167,6 +179,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-08",
     isFavorite: true,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "9",
@@ -178,6 +191,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-07",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "10",
@@ -189,6 +203,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-06",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "11",
@@ -200,6 +215,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-05",
     isFavorite: true,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "12",
@@ -212,6 +228,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-04",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "13",
@@ -224,6 +241,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-03",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "14",
@@ -235,6 +253,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-02",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "15",
@@ -247,6 +266,7 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2024-01-01",
     isFavorite: false,
     hasDarkIcon: true,
+    status: "active",
   },
   {
     id: "16",
@@ -258,5 +278,6 @@ export const bookmarks: Bookmark[] = [
     createdAt: "2023-12-31",
     isFavorite: true,
     hasDarkIcon: true,
+    status: "active",
   },
 ];

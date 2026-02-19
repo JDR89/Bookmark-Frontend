@@ -48,7 +48,8 @@ import {
   Link as LinkIcon,
 } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
-import { workspaces } from "@/mock-data/bookmarks";
+import { CreateWorkspaceModal, workspaceColors } from "@/components/dashboard/create-workspace-modal";
+import { WorkspaceSettingsModal } from "@/components/dashboard/workspace-settings-modal";
 import { CollectionModal } from "@/components/dashboard/collection-modal";
 
 const collectionIcons: Record<string, React.ElementType> = {
@@ -75,12 +76,15 @@ export function BookmarksSidebar({
 }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const [collectionsOpen, setCollectionsOpen] = React.useState(true);
+  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = React.useState(false);
+  const [isWorkspaceSettingsOpen, setIsWorkspaceSettingsOpen] = React.useState(false);
   const {
     selectedCollection,
     setSelectedCollection,
     selectedWorkspace,
     setSelectedWorkspace,
     collections,
+    workspaces,
     bookmarks,
   } = useBookmarksStore();
 
@@ -100,8 +104,14 @@ export function BookmarksSidebar({
         <div className="flex items-center justify-between">
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-              <div className="size-7 rounded-full overflow-hidden bg-linear-to-br from-blue-400 via-indigo-500 to-violet-500 flex items-center justify-center ring-1 ring-white/40 shadow-lg" />
-              <span className="font-medium text-muted-foreground">
+              <div
+                className={cn(
+                  "size-7 rounded-full overflow-hidden flex items-center justify-center ring-1 ring-white/40 shadow-lg",
+                  workspaceColors.find(c => c.id === currentWorkspace.color)?.class || workspaceColors[0].class
+                )}
+              />
+
+              <span className="font-medium text-muted-foreground truncate">
                 {currentWorkspace.name}
               </span>
               <ChevronDown className="size-3 text-muted-foreground" />
@@ -115,8 +125,15 @@ export function BookmarksSidebar({
                   key={workspace.id}
                   onClick={() => setSelectedWorkspace(workspace.id)}
                 >
-                  <div className="size-5 rounded-full bg-linear-to-br from-blue-400 via-indigo-500 to-violet-500 mr-2" />
-                  {workspace.name}
+                  <div
+                    className={cn(
+                      "size-5 rounded-full mr-2",
+                      workspaceColors.find(c => c.id === workspace.color)?.class || workspaceColors[0].class
+                    )}
+                  />
+                  <div className="truncate flex-1">
+                    {workspace.name}
+                  </div>
                   {selectedWorkspace === workspace.id && (
                     <Check className="size-4 ml-auto" />
                   )}
@@ -124,19 +141,18 @@ export function BookmarksSidebar({
               ))}
 
               <DropdownMenuSeparator />
-
-              <DropdownMenuItem>
+              {/* MODAL PARA CREAR WORKSPACE */}
+              <DropdownMenuItem
+                onSelect={() => setIsCreateWorkspaceOpen(true)}
+                disabled={workspaces.length >= 5}
+              >
                 <Plus className="size-4 mr-2" />
                 Create Workspace
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem>
-                <User className="size-4 mr-2" />
-                Account Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setIsWorkspaceSettingsOpen(true)}>
                 <Settings className="size-4 mr-2" />
                 Workspace Settings
               </DropdownMenuItem>
@@ -149,6 +165,16 @@ export function BookmarksSidebar({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <CreateWorkspaceModal
+            open={isCreateWorkspaceOpen}
+            onOpenChange={setIsCreateWorkspaceOpen}
+          />
+          <WorkspaceSettingsModal
+            open={isWorkspaceSettingsOpen}
+            onOpenChange={setIsWorkspaceSettingsOpen}
+          />
+
           <Avatar className="size-6.5">
             <AvatarImage src="/ln.png" />
             <AvatarFallback>LN</AvatarFallback>
@@ -263,6 +289,6 @@ export function BookmarksSidebar({
       {/* <SidebarFooter className="px-5 pb-5">
 
       </SidebarFooter> */}
-    </Sidebar>
+    </Sidebar >
   );
 }

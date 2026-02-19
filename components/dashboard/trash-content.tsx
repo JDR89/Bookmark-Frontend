@@ -93,7 +93,7 @@ function TrashedBookmarkCard({ bookmark }: { bookmark: Bookmark }) {
 }
 
 export function TrashContent() {
-  const { getTrashedBookmarks, trashedBookmarks } = useBookmarksStore();
+  const { getTrashedBookmarks } = useBookmarksStore();
   const filteredTrash = getTrashedBookmarks();
 
   return (
@@ -107,12 +107,12 @@ export function TrashContent() {
             <div>
               <h2 className="text-lg font-semibold">Trash</h2>
               <p className="text-sm text-muted-foreground">
-                {trashedBookmarks.length} bookmark
-                {trashedBookmarks.length !== 1 ? "s" : ""} in trash
+                {filteredTrash.length} bookmark
+                {filteredTrash.length !== 1 ? "s" : ""} in trash
               </p>
             </div>
           </div>
-          {trashedBookmarks.length > 0 && (
+          {filteredTrash.length > 0 && (
             <p className="text-xs text-muted-foreground hidden sm:block">
               Items in trash will be permanently deleted after 30 days
             </p>
@@ -125,7 +125,7 @@ export function TrashContent() {
           ))}
         </div>
 
-        {trashedBookmarks.length === 0 && (
+        {filteredTrash.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="size-12 rounded-full bg-muted flex items-center justify-center mb-4">
               <Trash2 className="size-6 text-muted-foreground" />
