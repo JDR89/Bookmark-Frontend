@@ -88,7 +88,7 @@ export function BookmarksSidebar({
     bookmarks,
   } = useBookmarksStore();
 
-  const isHomePage = pathname === "/";
+  const isBookmarksPage = pathname === "/bookmarks";
 
   // Find current workspace object for display
   const currentWorkspace = workspaces.find(w => w.id === selectedWorkspace) || workspaces[0];
@@ -207,11 +207,11 @@ export function BookmarksSidebar({
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={isHomePage && selectedCollection === "all"}
+                    isActive={isBookmarksPage && selectedCollection === "all"}
                     className="h-[38px]"
                   >
                     <Link
-                      href="/"
+                      href="/bookmarks"
                       onClick={() => setSelectedCollection("all")}
                     >
                       <Bookmark className="size-5" />
@@ -225,7 +225,7 @@ export function BookmarksSidebar({
                   const IconComponent =
                     collectionIcons[collection.icon] || Folder;
                   const isActive =
-                    isHomePage && selectedCollection === collection.id;
+                    isBookmarksPage && selectedCollection === collection.id;
                   const count = bookmarks.filter(
                     (b) => b.collectionId === collection.id
                   ).length;
@@ -237,7 +237,7 @@ export function BookmarksSidebar({
                         className="h-[38px]"
                       >
                         <Link
-                          href="/"
+                          href="/bookmarks"
                           onClick={() => {
                             setSelectedCollection(collection.id);
                           }}
