@@ -22,49 +22,49 @@ import { Input } from "@/components/ui/input";
 
 // 1. Esquema de Validación Zod
 const formSchema = z.object({
-    email: z.email({
+    email: z.string().email({
         message: "Ingresa un email válido.",
     }),
     password: z.string().min(6, {
         message: "La contraseña debe tener al menos 6 caracteres.",
     }),
+    fullName: z.string().optional(), // El backend permite registrarse solo con email/pass
 });
 
-export function LoginForm() {
+export function RegisterForm() {
     const router = useRouter();
     const login = useBookmarksStore((state) => state.login);
     const [error, setError] = useState("");
 
-    // 2. Setup de React Hook Form
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
             password: "",
+            fullName: "",
         },
     });
 
     const isLoading = form.formState.isSubmitting;
 
-    // 3. Función Submit (sólo se ejecuta si Zod aprueba la validación)
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setError("");
         try {
-            const { data } = await api.post("/auth/login", values);
+            // El backend recibe fullName, email y password
+            const { data } = await api.post("/auth/register", values);
             login(data.token);
             router.push("/bookmarks");
-
         } catch (err: any) {
-            console.error("Login failed:", err);
-            setError(err.response?.data?.message || "Credenciales incorrectas");
+            console.error("Register failed:", err);
+            setError(err.response?.data?.message || "Error al crear la cuenta");
         }
     };
 
     return (
         <div className="w-full max-w-md p-8 bg-zinc-950 border border-zinc-800 rounded-2xl shadow-xl">
             <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-white mb-2">Welcome back</h2>
-                <p className="text-sm text-zinc-400">Sign in to access your bookmarks</p>
+                <h2 className="text-2xl font-bold text-white mb-2">Create an account</h2>
+                <p className="text-sm text-zinc-400">Join us to start organizing your web</p>
             </div>
 
             <Button
@@ -83,21 +83,17 @@ export function LoginForm() {
                     <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
                     <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
                 </svg>
-                Login with Google
+                Continue with Google
             </Button>
 
             <div className="relative flex items-center mb-6">
                 <div className="flex-grow border-t border-zinc-800"></div>
-                <span className="flex-shrink-0 mx-4 text-xs text-zinc-500 uppercase">
-                    Or
-                </span>
+                <span className="flex-shrink-0 mx-4 text-xs text-zinc-500 uppercase">Or</span>
                 <div className="flex-grow border-t border-zinc-800"></div>
             </div>
 
-            {/* 4. Implementación del render del Form de Shadcn */}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
                     {error && (
                         <div className="p-3 text-sm text-red-400 bg-red-950/50 border border-red-900 rounded-lg">
                             {error}
@@ -127,24 +123,19 @@ export function LoginForm() {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <div className="flex justify-between items-center pb-1">
-                                    <FormLabel className="text-white pb-0">Password</FormLabel>
-                                    <Link
-                                        href="/forgot-password"
-                                        className="text-xs text-blue-500 hover:text-blue-400"
-                                    >
-                                        Forgot password?
-                                    </Link>
-                                </div>
+                                <FormLabel className="text-white pb-0">Password</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="password"
-                                        placeholder="Enter your password"
+                                        placeholder="Create a password"
                                         className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600 h-11 focus-visible:ring-blue-500"
                                         {...field}
                                     />
                                 </FormControl>
                                 <FormMessage className="text-red-400" />
+                                <p className="text-xs text-zinc-500 mt-1">
+                                    By signing up, you agree to our Terms of Service and Privacy Policy.
+                                </p>
                             </FormItem>
                         )}
                     />
@@ -152,17 +143,17 @@ export function LoginForm() {
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium h-11 mt-2"
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium h-11 mt-4"
                     >
-                        {isLoading ? "Signing In..." : "Sign In"}
+                        {isLoading ? "Signing Up..." : "Sign Up"}
                     </Button>
                 </form>
             </Form>
 
             <p className="text-center text-sm text-zinc-400 mt-6">
-                Don&apos;t have an account?{" "}
-                <Link href="/register" className="text-blue-500 hover:text-blue-400">
-                    Sign up
+                Already have an account?{" "}
+                <Link href="/" className="text-blue-500 hover:text-blue-400">
+                    Sign in
                 </Link>
             </p>
         </div>
