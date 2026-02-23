@@ -4,6 +4,7 @@ import { BookmarksContent } from "@/components/dashboard/content";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function BookmarksPage() {
+
     return (
         <SidebarProvider className="bg-sidebar">
             <BookmarksSidebar />

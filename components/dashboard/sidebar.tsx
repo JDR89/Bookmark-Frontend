@@ -71,6 +71,8 @@ const navItems = [
   { icon: Trash2, label: "Trash", href: "/trash" },
 ];
 
+import { useStore } from "@/hooks/useStore";
+
 export function BookmarksSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
@@ -78,15 +80,31 @@ export function BookmarksSidebar({
   const [collectionsOpen, setCollectionsOpen] = React.useState(true);
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = React.useState(false);
   const [isWorkspaceSettingsOpen, setIsWorkspaceSettingsOpen] = React.useState(false);
+
+  const setSelectedCollection = useBookmarksStore((state) => state.setSelectedCollection);
+  const setSelectedWorkspace = useBookmarksStore((state) => state.setSelectedWorkspace);
+
+  const store = useStore(useBookmarksStore, (state) => state);
+
+  if (!store) {
+    return (
+      <Sidebar collapsible="offcanvas" className="lg:border-r-0!" {...props}>
+        <SidebarHeader className="p-5 pb-0">
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-muted-foreground animate-pulse text-sm">Loading...</span>
+          </div>
+        </SidebarHeader>
+      </Sidebar>
+    );
+  }
+
   const {
     selectedCollection,
-    setSelectedCollection,
     selectedWorkspace,
-    setSelectedWorkspace,
     collections,
     workspaces,
     bookmarks,
-  } = useBookmarksStore();
+  } = store;
 
   const isBookmarksPage = pathname === "/bookmarks";
 

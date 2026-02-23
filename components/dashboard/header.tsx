@@ -43,17 +43,31 @@ const filterOptions = [
   { value: "favorites", label: "Favorites Only" },
 ] as const;
 
+import { useStore } from "@/hooks/useStore";
+
 export function BookmarksHeader({ title = "Bookmarks" }: BookmarksHeaderProps) {
-  const {
-    viewMode,
-    setViewMode,
-    searchQuery,
-    setSearchQuery,
-    sortBy,
-    setSortBy,
-    filterType,
-    setFilterType,
-  } = useBookmarksStore();
+  const setViewMode = useBookmarksStore((state) => state.setViewMode);
+  const setSearchQuery = useBookmarksStore((state) => state.setSearchQuery);
+  const setSortBy = useBookmarksStore((state) => state.setSortBy);
+  const setFilterType = useBookmarksStore((state) => state.setFilterType);
+
+  const store = useStore(useBookmarksStore, (state) => state);
+
+  if (!store) {
+    return (
+      <header className="w-full border-b">
+        <div className="flex items-center justify-between h-14 px-4">
+          <div className="flex items-center gap-3">
+            <SidebarTrigger />
+            <Separator orientation="vertical" className="h-5" />
+            <h1 className="text-base font-semibold hidden sm:block animate-pulse text-muted-foreground">Loading...</h1>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  const { viewMode, searchQuery, sortBy, filterType } = store;
 
   const currentSort = sortOptions.find((opt) => opt.value === sortBy);
   const currentFilter = filterOptions.find((opt) => opt.value === filterType);

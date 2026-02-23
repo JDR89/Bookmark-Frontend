@@ -7,17 +7,31 @@ import { StatsCards } from "./stats-cards";
 import { Button } from "@/components/ui/button";
 import { X, Trash2 } from "lucide-react";
 
+import { useStore } from "@/hooks/useStore";
+
 export function BookmarksContent() {
+  const setFilterType = useBookmarksStore((state) => state.setFilterType);
+  const deleteCollection = useBookmarksStore((state) => state.deleteCollection);
+
+  const store = useStore(useBookmarksStore, (state) => state);
+
+  if (!store) {
+    return (
+      <div className="flex-1 w-full p-4 md:p-6 flex items-center justify-center">
+        <p className="text-muted-foreground animate-pulse text-sm">Loading bookmarks...</p>
+      </div>
+    );
+  }
+
   const {
     selectedCollection,
     getFilteredBookmarks,
     viewMode,
     filterType,
-    setFilterType,
     sortBy,
     collections,
-    deleteCollection,
-  } = useBookmarksStore();
+  } = store;
+
   const filteredBookmarks = getFilteredBookmarks();
 
   const currentCollection = collections.find(
