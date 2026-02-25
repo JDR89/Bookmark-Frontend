@@ -17,5 +17,5 @@ export function GoogleAuthHandler() {
         }
     }, [searchParams, login, router]);
 
-    return null; // Este componente no dibuja nada
+    return null;
 }
