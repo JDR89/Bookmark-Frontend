@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 
 // 1. Esquema de Validación Zod
 const formSchema = z.object({
-    email: z.string().email({
+    email: z.email({
         message: "Ingresa un email válido.",
     }),
     password: z.string().min(6, {
@@ -60,6 +60,12 @@ export function RegisterForm() {
         }
     };
 
+
+    const handleGoogleLogin = () => {
+        // Redirige al navegador entero a NestJS para iniciar el flujo con Google
+        window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3008/api'}/auth/google`;
+    };
+
     return (
         <div className="w-full max-w-md p-8 bg-zinc-950 border border-zinc-800 rounded-2xl shadow-xl">
             <div className="text-center mb-8">
@@ -68,6 +74,7 @@ export function RegisterForm() {
             </div>
 
             <Button
+                onClick={handleGoogleLogin}
                 variant="outline"
                 className="w-full bg-zinc-900 border-zinc-800 hover:bg-zinc-800 text-white mb-6 h-11"
             >

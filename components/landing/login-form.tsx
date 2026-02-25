@@ -30,6 +30,11 @@ const formSchema = z.object({
     }),
 });
 
+const handleGoogleLogin = () => {
+    // Redirige al navegador entero a NestJS para iniciar el flujo con Google
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3008/api'}/auth/google`;
+};
+
 export function LoginForm() {
     const router = useRouter();
     const login = useBookmarksStore((state) => state.login);
@@ -68,6 +73,7 @@ export function LoginForm() {
             </div>
 
             <Button
+                onClick={handleGoogleLogin}
                 variant="outline"
                 className="w-full bg-zinc-900 border-zinc-800 hover:bg-zinc-800 text-white mb-6 h-11"
             >
