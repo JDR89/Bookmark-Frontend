@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -52,6 +52,8 @@ import { CreateWorkspaceModal, workspaceColors } from "@/components/dashboard/cr
 import { WorkspaceSettingsModal } from "@/components/dashboard/workspace-settings-modal";
 import { CollectionModal } from "@/components/dashboard/collection-modal";
 
+
+
 const collectionIcons: Record<string, React.ElementType> = {
   bookmark: Bookmark,
   palette: Palette,
@@ -72,11 +74,14 @@ const navItems = [
 ];
 
 import { useStore } from "@/hooks/useStore";
+import { LoginButtonSidebar } from "./login-button-sidebar";
+
 
 export function BookmarksSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const router = useRouter()
   const [collectionsOpen, setCollectionsOpen] = React.useState(true);
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = React.useState(false);
   const [isWorkspaceSettingsOpen, setIsWorkspaceSettingsOpen] = React.useState(false);
@@ -104,6 +109,8 @@ export function BookmarksSidebar({
     collections,
     workspaces,
     bookmarks,
+    authStatus,
+    logout,
   } = store;
 
   const isBookmarksPage = pathname === "/bookmarks";
@@ -115,6 +122,8 @@ export function BookmarksSidebar({
   const workspaceCollections = collections.filter(
     (c) => c.workspaceId === selectedWorkspace
   );
+
+
 
   return (
     <Sidebar collapsible="offcanvas" className="lg:border-r-0!" {...props}>
@@ -177,7 +186,13 @@ export function BookmarksSidebar({
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => {
+                  logout()
+                  router.push("/")
+                }}
+              >
                 <LogOut className="size-4 mr-2" />
                 Log out
               </DropdownMenuItem>
@@ -201,7 +216,11 @@ export function BookmarksSidebar({
       </SidebarHeader>
 
       <SidebarContent className="px-5 pt-5">
-
+        {authStatus === "guest" && (
+          <div className="mb-6">
+            <LoginButtonSidebar />
+          </div>
+        )}
 
         <SidebarGroup className="p-0">
           <SidebarGroupLabel className="flex items-center gap-1.5 px-0 text-[10px] font-semibold tracking-wider text-muted-foreground">
