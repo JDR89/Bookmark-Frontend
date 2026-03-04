@@ -134,12 +134,14 @@ export function BookmarksSidebar({
               <div
                 className={cn(
                   "size-7 rounded-full overflow-hidden flex items-center justify-center ring-1 ring-white/40 shadow-lg",
-                  workspaceColors.find(c => c.id === currentWorkspace.color)?.class || workspaceColors[0].class
+                  currentWorkspace
+                    ? workspaceColors.find(c => c.id === currentWorkspace.color)?.class || workspaceColors[0].class
+                    : "bg-muted" // Placeholder color while loading/empty
                 )}
               />
 
               <span className="font-medium text-muted-foreground truncate">
-                {currentWorkspace.name}
+                {currentWorkspace?.name || "Loading..."}
               </span>
               <ChevronDown className="size-3 text-muted-foreground" />
             </DropdownMenuTrigger>

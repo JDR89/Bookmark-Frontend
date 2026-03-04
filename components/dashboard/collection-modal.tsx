@@ -75,8 +75,8 @@ export function CollectionModal({ children }: { children?: React.ReactNode }) {
     });
 
     // 3. Submit Handler
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        addCollection({
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        await addCollection({
             name: values.name,
             workspaceId: selectedWorkspace,
             icon: values.icon,

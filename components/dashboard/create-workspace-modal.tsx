@@ -81,13 +81,9 @@ export function CreateWorkspaceModal({ open, onOpenChange }: CreateWorkspaceModa
         }
     }, [open, form.reset]);
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         const formattedName = values.name.charAt(0).toUpperCase() + values.name.slice(1).toLowerCase();
-
-        addWorkspace({
-            name: formattedName,
-            color: values.color,
-        });
+        await addWorkspace({ name: formattedName, color: values.color });
         onOpenChange(false);
         form.reset();
     }

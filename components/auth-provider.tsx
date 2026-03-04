@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { useBookmarksStore } from "@/store/bookmarks-store";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { authStatus, token, login, logout } = useBookmarksStore((state) => state);
+    const { authStatus, token, login, logout, fetchUserData } = useBookmarksStore((state) => state);
     const [isRefreshing, setIsRefreshing] = useState(true);
     const pathname = usePathname();
     const router = useRouter();
@@ -17,6 +17,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             router.replace("/bookmarks");
         }
     }, [authStatus, pathname, router]);
+
+    useEffect(() => {
+        if (authStatus === "authenticated") {
+            fetchUserData();
+        }
+    }, [authStatus, fetchUserData]);
 
     useEffect(() => {
         const checkAndRefreshToken = async () => {
