@@ -40,7 +40,7 @@ interface BookmarksState {
   getArchivedBookmarks: () => Bookmark[];
   getTrashedBookmarks: () => Bookmark[];
   updateBookmark: (id: string, updates: Partial<Bookmark>) => void;
-  addBookmark: (bookmark: { title: string; url: string; collectionId?: string; description?: string; icon?: string }) => void;
+  addBookmark: (bookmark: { title: string; url: string; collectionId?: string; description?: string; icon?: string }) => Promise<void>;
   addCollection: (collection: { name: string; workspaceId: string; icon?: string }) => Promise<void>;
   addWorkspace: (workspace: { name: string; color: string }) => Promise<void>;
   deleteWorkspace: (workspaceId: string) => void;
@@ -317,23 +317,65 @@ export const useBookmarksStore = create<BookmarksState>()(
           return filtered;
         },
 
-        addBookmark: ({ title, url, collectionId, description, icon }) =>
-          set((state) => {
+        addBookmark: async ({ title, url, collectionId, description, icon }) => {
+          const state = get();
+
+          // 1. Validar que SÍ O SÍ venga una colección desde el Modal (o de donde se llame)
+          if (!collectionId || collectionId === "all" || collectionId === "favorites" || collectionId === "archive" || collectionId === "trash") {
+            console.error("Error: Se intentó crear un bookmark sin seleccionar una colección física válida.");
+            return; // Bloqueamos la creación
+          }
+
+          if (state.authStatus === "authenticated") {
+            try {
+              // 2. Enviamos el bookmark al backend con el ID que eligió en el UI
+              const { data } = await api.post("/bookmarks", {
+                title,
+                url,
+                collectionId,
+                description: description || "",
+                favicon: icon || "link"
+              });
+
+              // 3. Optimistic UI Update
+              set({
+                bookmarks: [
+                  {
+                    id: data.id,
+                    title: data.title,
+                    url: data.url,
+                    description: data.description,
+                    favicon: data.favicon,
+                    collectionId: collectionId, // Inyectamos el ID oficial de la colección
+                    createdAt: data.createdAt,
+                    isFavorite: data.isFavorite || false,
+                    hasDarkIcon: false,
+                    status: "active"
+                  },
+                  ...state.bookmarks
+                ]
+              });
+            } catch (error) {
+              console.error("Error creating bookmark en backend:", error);
+            }
+          }
+          else {
+            // Lógica Guest / Offline
             const newBookmark: Bookmark = {
               id: Math.random().toString(36).substring(2, 15),
               title,
               url,
-              description: description || "", // Si no hay descripción, string vacío
-              favicon: icon || "link", // Default a "link" si no se proporciona
-              collectionId: collectionId || (state.selectedCollection === "all" ? "reading" : state.selectedCollection),
+              description: description || "",
+              favicon: icon || "link",
+              collectionId: collectionId,
               createdAt: new Date().toISOString().split("T")[0],
               isFavorite: false,
               hasDarkIcon: false,
               status: "active",
             };
-
-            return { bookmarks: [newBookmark, ...state.bookmarks] };
-          }),
+            set({ bookmarks: [newBookmark, ...state.bookmarks] });
+          }
+        },
 
         addCollection: async ({ name, workspaceId, icon }) => {
           const state = get();

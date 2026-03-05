@@ -106,7 +106,7 @@ export function BookmarkModal({ children, bookmarkToEdit }: { children?: React.R
 
     // 3. Manejador de envío
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         if (bookmarkToEdit) {
             updateBookmark(bookmarkToEdit.id, {
                 title: values.name,
@@ -116,7 +116,7 @@ export function BookmarkModal({ children, bookmarkToEdit }: { children?: React.R
                 favicon: values.icon,
             });
         } else {
-            addBookmark({
+            await addBookmark({
                 title: values.name,
                 url: values.url,
                 collectionId: values.collectionId,
