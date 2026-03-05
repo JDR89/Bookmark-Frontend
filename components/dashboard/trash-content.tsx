@@ -80,7 +80,9 @@ function TrashedBookmarkCard({ bookmark }: { bookmark: Bookmark }) {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive"
-              onClick={() => permanentlyDelete(bookmark.id)}
+              onClick={async () => {
+                await permanentlyDelete(bookmark.id);
+              }}
             >
               <XCircle className="size-4 mr-2" />
               Delete Permanently

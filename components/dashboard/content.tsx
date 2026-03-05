@@ -131,7 +131,9 @@ export function BookmarksContent() {
                   variant="ghost"
                   size="sm"
                   className="mt-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => deleteCollection(selectedCollection)}
+                  onClick={async () => {
+                    await deleteCollection(selectedCollection);
+                  }}
                 >
                   <Trash2 className="size-4 mr-2" />
                   Delete Collection

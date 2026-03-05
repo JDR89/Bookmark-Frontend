@@ -103,7 +103,7 @@ export function CollectionModal({ children }: { children?: React.ReactNode }) {
                 <DialogHeader>
                     <DialogTitle>Create New Collection</DialogTitle>
                     <DialogDescription>
-                        Add a new collection to your {selectedWorkspace} workspace.
+                        Add a new collection to your workspace.
                     </DialogDescription>
                 </DialogHeader>
 

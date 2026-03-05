@@ -34,7 +34,7 @@ interface BookmarksState {
   restoreFromArchive: (bookmarkId: string) => void;
   trashBookmark: (bookmarkId: string) => void;
   restoreFromTrash: (bookmarkId: string) => void;
-  permanentlyDelete: (bookmarkId: string) => void;
+  permanentlyDelete: (bookmarkId: string) => Promise<void>;
   getFilteredBookmarks: () => Bookmark[];
   getFavoriteBookmarks: () => Bookmark[];
   getArchivedBookmarks: () => Bookmark[];
@@ -43,8 +43,8 @@ interface BookmarksState {
   addBookmark: (bookmark: { title: string; url: string; collectionId?: string; description?: string; icon?: string }) => Promise<void>;
   addCollection: (collection: { name: string; workspaceId: string; icon?: string }) => Promise<void>;
   addWorkspace: (workspace: { name: string; color: string }) => Promise<void>;
-  deleteWorkspace: (workspaceId: string) => void;
-  deleteCollection: (collectionId: string) => void;
+  deleteWorkspace: (workspaceId: string) => Promise<void>;
+  deleteCollection: (collectionId: string) => Promise<void>;
   fetchUserData: () => Promise<void>;
 }
 
@@ -177,10 +177,19 @@ export const useBookmarksStore = create<BookmarksState>()(
             ),
           })),
 
-        permanentlyDelete: (bookmarkId) =>
+        permanentlyDelete: async (bookmarkId) => {
+          const state = get();
+          if (state.authStatus === "authenticated") {
+            try {
+              await api.delete(`/bookmarks/${bookmarkId}`);
+            } catch (error) {
+              console.error("Error eliminando bookmark en servidor:", error);
+            }
+          }
           set((state) => ({
             bookmarks: state.bookmarks.filter((b) => b.id !== bookmarkId),
-          })),
+          }));
+        },
 
         updateBookmark: (id, updates) =>
           set((state) => ({
@@ -459,17 +468,23 @@ export const useBookmarksStore = create<BookmarksState>()(
           }
         },
 
-        deleteWorkspace: (workspaceId) =>
-          set((state) => {
-            // Prevent deleting the last workspace
-            if (state.workspaces.length <= 1) return state;
+        deleteWorkspace: async (workspaceId) => {
+          const state = get();
+          // Prevenir eliminar el último
+          if (state.workspaces.length <= 1) return;
+          if (state.authStatus === "authenticated") {
+            try {
+              await api.delete(`/workspaces/${workspaceId}`);
+            } catch (error) {
+              console.error("Error eliminando workspace", error);
+            }
+          }
 
+          set((state) => {
             const collectionIds = state.collections
               .filter((c) => c.workspaceId === workspaceId)
               .map((c) => c.id);
-
             const remainingWorkspaces = state.workspaces.filter((w) => w.id !== workspaceId);
-
             return {
               workspaces: remainingWorkspaces,
               collections: state.collections.filter((c) => c.workspaceId !== workspaceId),
@@ -479,15 +494,26 @@ export const useBookmarksStore = create<BookmarksState>()(
                 : state.selectedWorkspace,
               selectedCollection: state.selectedWorkspace === workspaceId ? "all" : state.selectedCollection,
             };
-          }),
+          });
+        },
 
-        deleteCollection: (collectionId) =>
+        deleteCollection: async (collectionId) => {
+          const state = get();
+          if (state.authStatus === "authenticated") {
+            try {
+              await api.delete(`/collections/${collectionId}`);
+            } catch (error) {
+              console.error("Error eliminando colección:", error);
+            }
+          }
           set((state) => ({
             collections: state.collections.filter((c) => c.id !== collectionId),
             bookmarks: state.bookmarks.filter((b) => b.collectionId !== collectionId),
             selectedCollection: "all",
-          })),
+          }));
+        },
       }),
+
       {
         name: "bookmarks-storage", // name of the item in the storage (must be unique)
       }

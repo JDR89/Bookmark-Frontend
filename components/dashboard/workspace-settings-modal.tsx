@@ -48,9 +48,9 @@ export function WorkspaceSettingsModal({ open, onOpenChange }: WorkspaceSettings
         return { collections: wsCollections.length, bookmarks: wsBookmarks.length };
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (workspaceToDelete) {
-            deleteWorkspace(workspaceToDelete);
+            await deleteWorkspace(workspaceToDelete);
             setWorkspaceToDelete(null);
         }
     };
