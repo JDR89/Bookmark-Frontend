@@ -28,7 +28,9 @@ const formSchema = z.object({
     password: z.string().min(6, {
         message: "La contraseña debe tener al menos 6 caracteres.",
     }),
-    fullName: z.string().optional(), // El backend permite registrarse solo con email/pass
+    fullName: z.string().min(3, {
+        message: "El nombre completo debe tener al menos 3 caracteres.",
+    }),
 });
 
 export function RegisterForm() {
@@ -116,6 +118,24 @@ export function RegisterForm() {
                                 <FormControl>
                                     <Input
                                         placeholder="you@example.com"
+                                        className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600 h-11 focus-visible:ring-blue-500"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-red-400" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="fullName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-white">Full Name</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="John Doe"
                                         className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-600 h-11 focus-visible:ring-blue-500"
                                         {...field}
                                     />
