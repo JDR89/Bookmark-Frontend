@@ -13,6 +13,7 @@ import { Trash2, MoreHorizontal, RotateCcw, XCircle, ExternalLink, Link, Code, B
 import Image from "next/image";
 import { type Bookmark } from "@/mock-data/bookmarks";
 import { cn } from "@/lib/utils";
+import { useStore } from "@/hooks/useStore";
 
 function TrashedBookmarkCard({ bookmark }: { bookmark: Bookmark }) {
   const { restoreFromTrash, permanentlyDelete } = useBookmarksStore();
@@ -95,7 +96,17 @@ function TrashedBookmarkCard({ bookmark }: { bookmark: Bookmark }) {
 }
 
 export function TrashContent() {
-  const { getTrashedBookmarks } = useBookmarksStore();
+  const store = useStore(useBookmarksStore, (state) => state);
+
+  if (!store) {
+    return (
+      <div className="flex-1 w-full p-4 md:p-6 flex items-center justify-center">
+        <p className="text-muted-foreground animate-pulse text-sm">Loading trash...</p>
+      </div>
+    );
+  }
+
+  const { getTrashedBookmarks } = store;
   const filteredTrash = getTrashedBookmarks();
 
   return (

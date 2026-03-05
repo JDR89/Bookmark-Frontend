@@ -3,9 +3,20 @@
 import { useBookmarksStore } from "@/store/bookmarks-store";
 import { BookmarkCard } from "./bookmark-card";
 import { Star } from "lucide-react";
+import { useStore } from "@/hooks/useStore";
 
 export function FavoritesContent() {
-  const { getFavoriteBookmarks, viewMode } = useBookmarksStore();
+  const store = useStore(useBookmarksStore, (state) => state);
+
+  if (!store) {
+    return (
+      <div className="flex-1 w-full p-4 md:p-6 flex items-center justify-center">
+        <p className="text-muted-foreground animate-pulse text-sm">Loading favorites...</p>
+      </div>
+    );
+  }
+
+  const { getFavoriteBookmarks, viewMode } = store;
   const favoriteBookmarks = getFavoriteBookmarks();
 
   return (

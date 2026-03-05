@@ -2,6 +2,7 @@
 
 import { Bookmark, Star, FolderOpen } from "lucide-react";
 import { useBookmarksStore } from "@/store/bookmarks-store";
+import { useStore } from "@/hooks/useStore";
 
 const stats = [
   {
@@ -22,7 +23,13 @@ const stats = [
 ];
 
 export function StatsCards() {
-  const { bookmarks, collections, selectedWorkspace } = useBookmarksStore();
+  const store = useStore(useBookmarksStore, (state) => state);
+
+  if (!store) {
+    return null;
+  }
+
+  const { bookmarks, collections, selectedWorkspace } = store;
 
   const workspaceCollections = collections.filter(
     (c) => c.workspaceId === selectedWorkspace

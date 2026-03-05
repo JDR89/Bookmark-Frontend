@@ -108,7 +108,7 @@ export const useBookmarksStore = create<BookmarksState>()(
                         createdAt: bk.createdAt || new Date().toISOString(),
                         isFavorite: bk.isFavorite || false,
                         hasDarkIcon: false,
-                        status: "active"
+                        status: bk.status || "active"
                       });
                     });
                   }
@@ -140,42 +140,53 @@ export const useBookmarksStore = create<BookmarksState>()(
 
         setFilterType: (filter) => set({ filterType: filter }),
 
-        toggleFavorite: (bookmarkId) =>
-          set((state) => ({
-            bookmarks: state.bookmarks.map((bookmark) =>
-              bookmark.id === bookmarkId
-                ? { ...bookmark, isFavorite: !bookmark.isFavorite }
-                : bookmark
-            ),
-          })),
+        toggleFavorite: async (bookmarkId) => {
+          const state = get();
+          const target = state.bookmarks.find(b => b.id === bookmarkId);
+          if (!target) return;
+          const newFavState = !target.isFavorite;
+          if (state.authStatus === "authenticated") {
+            try { await api.patch(`/bookmarks/${bookmarkId}`, { isFavorite: newFavState }); }
+            catch (error) { console.error(error); return; }
+          }
+          set((state) => ({ bookmarks: state.bookmarks.map((b) => b.id === bookmarkId ? { ...b, isFavorite: newFavState } : b) }));
+        },
 
-        archiveBookmark: (bookmarkId) =>
-          set((state) => ({
-            bookmarks: state.bookmarks.map((b) =>
-              b.id === bookmarkId ? { ...b, status: "archived" } : b
-            ),
-          })),
+        archiveBookmark: async (bookmarkId) => {
+          const state = get();
+          if (state.authStatus === "authenticated") {
+            try { await api.patch(`/bookmarks/${bookmarkId}`, { status: "archived" }); }
+            catch (error) { console.error(error); return; }
+          }
+          set((state) => ({ bookmarks: state.bookmarks.map((b) => b.id === bookmarkId ? { ...b, status: "archived" } : b) }));
+        },
 
-        restoreFromArchive: (bookmarkId) =>
-          set((state) => ({
-            bookmarks: state.bookmarks.map((b) =>
-              b.id === bookmarkId ? { ...b, status: "active" } : b
-            ),
-          })),
+        restoreFromArchive: async (bookmarkId) => {
+          const state = get();
+          if (state.authStatus === "authenticated") {
+            try { await api.patch(`/bookmarks/${bookmarkId}`, { status: "active" }); }
+            catch (error) { console.error(error); return; }
+          }
+          set((state) => ({ bookmarks: state.bookmarks.map((b) => b.id === bookmarkId ? { ...b, status: "active" } : b) }));
+        },
 
-        trashBookmark: (bookmarkId) =>
-          set((state) => ({
-            bookmarks: state.bookmarks.map((b) =>
-              b.id === bookmarkId ? { ...b, status: "trashed" } : b
-            ),
-          })),
+        trashBookmark: async (bookmarkId) => {
+          const state = get();
+          if (state.authStatus === "authenticated") {
+            try { await api.patch(`/bookmarks/${bookmarkId}`, { status: "trashed" }); }
+            catch (error) { console.error(error); return; }
+          }
+          set((state) => ({ bookmarks: state.bookmarks.map((b) => b.id === bookmarkId ? { ...b, status: "trashed" } : b) }));
+        },
 
-        restoreFromTrash: (bookmarkId) =>
-          set((state) => ({
-            bookmarks: state.bookmarks.map((b) =>
-              b.id === bookmarkId ? { ...b, status: "active" } : b
-            ),
-          })),
+        restoreFromTrash: async (bookmarkId) => {
+          const state = get();
+          if (state.authStatus === "authenticated") {
+            try { await api.patch(`/bookmarks/${bookmarkId}`, { status: "active" }); }
+            catch (error) { console.error(error); return; }
+          }
+          set((state) => ({ bookmarks: state.bookmarks.map((b) => b.id === bookmarkId ? { ...b, status: "active" } : b) }));
+        },
 
         permanentlyDelete: async (bookmarkId) => {
           const state = get();
