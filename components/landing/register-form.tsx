@@ -101,6 +101,15 @@ export function RegisterForm() {
                 <div className="flex-grow border-t border-zinc-800"></div>
             </div>
 
+            <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-xl text-center">
+                <p className="text-sm text-zinc-400">
+                    Traditional email registration is temporarily disabled for security reasons.
+                    <br /><br />
+                    Please use your Google account to sign up.
+                </p>
+            </div>
+
+            {/* Código original del formulario preservado para propósitos de open-source / plantillas:
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     {error && (
@@ -176,6 +185,7 @@ export function RegisterForm() {
                     </Button>
                 </form>
             </Form>
+            */}
 
             <p className="text-center text-sm text-zinc-400 mt-6">
                 Already have an account?{" "}
